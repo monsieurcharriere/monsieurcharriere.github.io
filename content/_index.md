@@ -29,7 +29,14 @@ links:
     icon: "fas fa-dumbbell"
     title: "Série de gainage"
     description: "Amorce et 2 niveaux de gainage (core - bracing)"
-
+  - href: "https://www.barbellcalculator.com/"
+    icon: "fas fa-calculator"
+    title: "Barbell Calculator"
+    description: "Assistance pour trouver le poids sur la barre"
+  - href: "https://timer.crosshero.com/"
+    icon: "fas fa-stopwatch"
+    title: "Workout Timer"
+    description: "Timer pour TABATA, AMRAP et EMOM"
 
 
 # Messaging Etiquette. You can add new rules as per your needs.
