@@ -1,0 +1,175 @@
+{
+  "main": {
+    "id": "f80fbedce361b992",
+    "type": "split",
+    "children": [
+      {
+        "id": "31753ee45da2fd3b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "c841de11e8432264",
+            "type": "leaf",
+            "state": {
+              "type": "image",
+              "state": {
+                "file": "static/images/Cheerful PE teacher in gymnasium.png"
+              },
+              "icon": "lucide-image",
+              "title": "Cheerful PE teacher in gymnasium"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "8148e9fa03c6c8e0",
+    "type": "split",
+    "children": [
+      {
+        "id": "9e8e5b4cb97c8129",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "81861610ba3ddfef",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "c40a192287bf4423",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "a34e1cdd653c84c9",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "5cf2fb11a0126bfc",
+    "type": "split",
+    "children": [
+      {
+        "id": "2e39cc8ab54b39c3",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "170d8bb82354476a",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "static/images/Cheerful PE teacher in gymnasium.png",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for Cheerful PE teacher in gymnasium"
+            }
+          },
+          {
+            "id": "370ce24c9da37421",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "static/images/Cheerful PE teacher in gymnasium.png",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from Cheerful PE teacher in gymnasium"
+            }
+          },
+          {
+            "id": "b49fe98871a2c87a",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "1794e47a9d46d1c5",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "static/images/Cheerful PE teacher in gymnasium.png",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Cheerful PE teacher in gymnasium"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "c841de11e8432264",
+  "lastOpenFiles": [
+    "static/images/mrcteacher.png",
+    "static/images/Cheerful PE teacher in gymnasium.png",
+    "content/_index.md"
+  ]
+}
