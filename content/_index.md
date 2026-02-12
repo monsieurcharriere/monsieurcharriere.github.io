@@ -8,30 +8,43 @@ links:
     icon: fas fa-dumbbell
     title: "Plan: Début Fort"
     description: Pour l'initiation à l'entrainement
+
   - href: https://drive.google.com/file/d/1Z1jL8CeJIULYnVMbYxKydNjdaVQmn2B0/view?usp=sharing
     icon: fas fa-dumbbell
     title: "Plan d'un mois / 3 jours par semaine"
     description: Pour ceux qui cherchent plus de structure
+
   - href: https://drive.google.com/file/d/1iLTrO90k___nt4M7kbJtbL9tmWh6uIOb/view?usp=sharing
     icon: fas fa-dumbbell
     title: Échauffement de mobilité
     description: Un bon échauffement qui mobilise le corps entier
+
   - href: https://drive.google.com/file/d/1Kbrk5DDM3xsItdN1MXdN5ROcLaxQZtNo/view?usp=sharing
     icon: fas fa-dumbbell
     title: Protocole pour le genou du sauteur
     description: Pour ceux qui soignent des douleurs aux genoux
+
+  - href: https://drive.google.com/file/d/18bxB7VWzpzbmdMTAWLYKs1NDw01zaLcH/view?usp=drive_link
+    icon: fas fa-dumbbell
+    title: Pas d'équipement ? Pas de problème !
+    description: Un entraînement efficace qui se complète avec rien d'autre que le poids de son corps.
+
   - href: https://drive.google.com/file/d/1qeeYKnMoFP3mV65FvC6LVp1eJqvA2-pK/view?usp=sharing
     icon: fas fa-dumbbell
     title: Série de gainage
     description: Amorce et 2 niveaux de gainage (core - bracing)
+
   - href: https://www.barbellcalculator.com/
     icon: fas fa-calculator
     title: Barbell Calculator
     description: Assistance pour trouver le poids sur la barre
+
   - href: https://timer.crosshero.com/
     icon: fas fa-stopwatch
     title: Workout Timer
     description: Timer pour TABATA, AMRAP et EMOM
+
+
 messaging:
   title: Rappels
   items:
