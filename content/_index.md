@@ -11,7 +11,7 @@ links:
 
   - href: https://drive.google.com/file/d/1Z1jL8CeJIULYnVMbYxKydNjdaVQmn2B0/view?usp=sharing
     icon: fas fa-dumbbell
-    title: "Plan d'un mois / 3 jours par semaine"
+    title: "Plan d'un mois: 3 jours/semaine"
     description: Pour ceux qui cherchent plus de structure
 
   - href: https://drive.google.com/file/d/1iLTrO90k___nt4M7kbJtbL9tmWh6uIOb/view?usp=sharing
@@ -26,7 +26,7 @@ links:
 
   - href: https://drive.google.com/file/d/18bxB7VWzpzbmdMTAWLYKs1NDw01zaLcH/view?usp=drive_link
     icon: fas fa-dumbbell
-    title: Pas d'équipement ? _Pas de problème !_
+    title: Pas d'équipement? _Pas de problème!_
     description: Un entraînement efficace qui se complète avec rien d'autre que le poids de son corps.
 
   - href: https://drive.google.com/file/d/1qeeYKnMoFP3mV65FvC6LVp1eJqvA2-pK/view?usp=sharing
