@@ -8,5 +8,18 @@ minVersion = "0.115.0"
   description     = "A clean, customizable, and responsive Linktree-style landing page built using HTML, Tailwind CSS, and Font Awesome."
   googleAnalytics = ""    # your GA ID, if any
 
+[markup.goldmark.extensions.typographer]
+  enable = true
+
+[markup.goldmark.parser.attribute]
+  block = true
+  title = true
+
+[markup.goldmark.renderer]
+  unsafe = true
+
+[markup.highlight]
+  style = "monokai"
+
 [outputs]
   home = ["HTML"]

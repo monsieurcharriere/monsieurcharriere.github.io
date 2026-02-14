@@ -26,7 +26,7 @@ links:
 
   - href: https://drive.google.com/file/d/18bxB7VWzpzbmdMTAWLYKs1NDw01zaLcH/view?usp=drive_link
     icon: fas fa-dumbbell
-    title: Pas d'équipement ? Pas de problème !
+    title: Pas d'équipement ? _Pas de problème !_
     description: Un entraînement efficace qui se complète avec rien d'autre que le poids de son corps.
 
   - href: https://drive.google.com/file/d/1qeeYKnMoFP3mV65FvC6LVp1eJqvA2-pK/view?usp=sharing
