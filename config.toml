@@ -1,6 +1,7 @@
 baseURL = 'https://monsieurcharriere.github.io'
 languageCode = "en-ca"
 title = "Page d'accueil de M. Charrière"
+favicon = "https://github.com/monsieurcharriere/monsieurcharriere.github.io/blob/main/static/images/favicon.ico"
 theme = "LucentLink-Hugo"
 minVersion = "0.115.0"
 
