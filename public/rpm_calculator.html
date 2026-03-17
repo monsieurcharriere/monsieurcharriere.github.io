@@ -7,7 +7,7 @@
   <!-- EXACT CSS from monsieurcharriere.github.io -->
   <link rel="stylesheet" href="/css/style.css">
 
-  <title>RPM Percentage Calculator</title>
+  <title>Calculatrice de RPM</title>
 </head>
 
 <body>
@@ -15,9 +15,9 @@
 <header class="site-header">
   <div class="wrapper">
     <nav>
-      <a href="rpm_calculator.html"><strong>RPM Calculator</strong></a>
+      <a href="rpm_calculator.html"><strong>Calculatric de RPM</strong></a>
       &nbsp;|&nbsp;
-      <a href="1rm_percentages.html">1RM Percentages</a>
+      <a href="1rm_percentages.html">Pourcentages 1RM</a>
     </nav>
   </div>
 </header>
@@ -30,7 +30,7 @@
     <label for="rpmInput">RPM</label>
     <input type="number" id="rpmInput" placeholder="Enter RPM value">
 
-    <button onclick="calculate()">Calculate Percentages</button>
+    <button onclick="calculate()">Caalculer %</button>
 
     <div id="results"></div>
 
@@ -39,7 +39,7 @@
 
 <footer class="site-footer">
   <div class="wrapper">
-    <p><a href="https://monsieurcharriere.github.io">Return to site</a></p>
+    <p><a href="https://monsieurcharriere.github.io">Revenir au site</a></p>
   </div>
 </footer>
 
@@ -49,13 +49,13 @@ function calculate() {
     const output = document.getElementById("results");
 
     if (isNaN(rpm)) {
-        output.innerHTML = "<p>Please enter a valid number.</p>";
+        output.innerHTML = "<p>Veuillez entrer un nombre valide.</p>";
         return;
     }
 
     const percentages = [50, 60, 70, 80, 90, 100, 110, 120];
 
-    let html = "<h3>Results</h3><ul>";
+    let html = "<h3>Résultats</h3><ul>";
     percentages.forEach(p => {
         const value = rpm * (p / 100);
         html += `<li>${p}% = ${value.toFixed(2)}</li>`;
