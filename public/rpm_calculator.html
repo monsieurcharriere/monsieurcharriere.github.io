@@ -10,6 +10,27 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
   <style>
+    /* Make the top nav links larger and more obviously clickable */
+nav a {
+    font-size: 1.25rem;       /* bigger text */
+    font-weight: 600;         /* semi-bold */
+    color: #2563eb !important; /* Tailwind blue-600 */
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Add a paragraph break worth of space below the nav */
+.site-header {
+    margin-bottom: 1.5rem; /* ~24px, equivalent to a paragraph break */
+}
+
+/* Optional: add a tiny bit more breathing room inside the nav */
+nav {
+    padding-bottom: 0.5rem;
+}
+
   input[type="number"],
   input[type="text"],
   input,
