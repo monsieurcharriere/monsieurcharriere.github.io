@@ -15,11 +15,11 @@
 <style>
 
 /* -----------------------------------------------------------
-   BACKGROUND ANIMATION (LIGHTER, OVERLAY ONLY)
+   SOFT, FEATHERED, SUBTLE BACKGROUND (MATCHES MAIN SITE)
 ----------------------------------------------------------- */
 
 :root {
-    --dot-color: rgba(255, 255, 255, 0.18);
+    --dot-color: rgba(255, 255, 255, 0.14);
 }
 
 .bg-animation {
@@ -27,7 +27,7 @@
     inset: 0;
     z-index: -1;
     overflow: hidden;
-    background: transparent; /* let theme background show */
+    background: transparent;
 }
 
 .bg-animation span {
@@ -35,18 +35,18 @@
     display: block;
     border-radius: 50%;
     background: var(--dot-color);
-    filter: blur(1px);
-    animation: animate linear infinite;
-    opacity: 0.6;
+    filter: blur(8px);
+    opacity: 0.12;
+    animation: floatUp linear infinite;
 }
 
-@keyframes animate {
+@keyframes floatUp {
     0% {
         transform: translateY(0) scale(1);
-        opacity: 0.6;
+        opacity: 0.12;
     }
     100% {
-        transform: translateY(-1200px) scale(0.4);
+        transform: translateY(-2000px) scale(0.7);
         opacity: 0;
     }
 }
@@ -54,45 +54,9 @@
 /* -----------------------------------------------------------
    NAV + SPACING + INPUT + BUTTON FIXES
 ----------------------------------------------------------- */
-/* Improved top navigation links */
+
 nav a {
-    font-size: 1.15rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    color: rgba(255, 255, 255, 0.85) !important;
-    text-decoration: none;
-    padding: 4px 6px;
-    transition: color 0.25s ease, text-shadow 0.25s ease;
-}
-
-nav a strong {
-    color: #ffffff !important; /* active page */
-}
-
-nav a:hover {
-    color: #ffffff !important;
-    text-shadow: 0 0 6px rgba(255, 255, 255, 0.45);
-}
-
-.site-header {
-    margin-bottom: 1.5rem;
-}
-
-nav {
-    padding-bottom: 0.5rem;
-}
-  /* Make top nav links fit on one line on mobile */
-nav {
-    display: flex;
-    justify-content: center;
-    gap: 0.75rem; /* space between links */
-    flex-wrap: nowrap; /* prevent wrapping */
-    white-space: nowrap; /* force single line */
-}
-
-/* Style links to match your site's aesthetic */
-nav a {
-    font-size: 1.05rem; /* slightly smaller so they fit */
+    font-size: 1.05rem;
     font-weight: 600;
     letter-spacing: 0.4px;
     color: rgba(255, 255, 255, 0.85) !important;
@@ -110,7 +74,19 @@ nav a:hover {
     text-shadow: 0 0 6px rgba(255, 255, 255, 0.45);
 }
 
-/* Make the separator smaller and consistent */
+.site-header {
+    margin-bottom: 1.5rem;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    padding-bottom: 0.5rem;
+}
+
 nav .sep {
     opacity: 0.6;
     padding: 0 4px;
@@ -139,53 +115,18 @@ button {
 button:hover {
     background-color: #d1d5db !important;
 }
-/* Make top nav links fit on one line on mobile */
-nav {
-    display: flex;
-    justify-content: center;
-    gap: 0.75rem; /* space between links */
-    flex-wrap: nowrap; /* prevent wrapping */
-    white-space: nowrap; /* force single line */
-}
 
-/* Style links to match your site's aesthetic */
-nav a {
-    font-size: 1.05rem; /* slightly smaller so they fit */
-    font-weight: 600;
-    letter-spacing: 0.4px;
-    color: rgba(255, 255, 255, 0.85) !important;
-    text-decoration: none;
-    padding: 4px 6px;
-    transition: color 0.25s ease, text-shadow 0.25s ease;
-}
-
-nav a strong {
-    color: #ffffff !important;
-}
-
-nav a:hover {
-    color: #ffffff !important;
-    text-shadow: 0 0 6px rgba(255, 255, 255, 0.45);
-}
-
-/* Make the separator smaller and consistent */
-nav .sep {
-    opacity: 0.6;
-    padding: 0 4px;
-}
-  /* Force the input section to behave like a full-width mobile block */
+/* Full-width mobile layout */
 .wrapper {
     width: 100%;
 }
 
-/* Make label, input, and button stack cleanly */
 .wrapper label {
     display: block;
     width: 100%;
     margin-bottom: 0.5rem;
 }
 
-/* Full-width input */
 .wrapper input[type="number"],
 .wrapper input[type="text"] {
     width: 100% !important;
@@ -193,12 +134,12 @@ nav .sep {
     margin-bottom: 1rem;
 }
 
-/* Full-width button */
 .wrapper button {
     width: 100% !important;
     box-sizing: border-box;
     margin-top: 0.5rem;
 }
+
 </style>
 
 <title>Pourcentages 1RM</title>
@@ -215,7 +156,7 @@ nav .sep {
   <div class="wrapper">
     <nav>
       <a href="rpm_calculator.html">Calculatrice RPM</a>
-      &nbsp;|&nbsp;
+      <span class="sep">|</span>
       <a href="1rm_percentages.html"><strong>Pourcentages 1RM</strong></a>
     </nav>
   </div>
@@ -226,7 +167,6 @@ nav .sep {
 
     <h1>Pourcentages 1RM</h1>
 
-    <!--label for="rmInput">1RM</label-->
     <input type="number" id="rmInput" placeholder="Entrer votre 1RM">
 
     <button onclick="calculate()">Calculer %</button>
@@ -245,11 +185,7 @@ nav .sep {
 <script>
 
 /* -----------------------------------------------------------
-   PARTICLE GENERATOR
------------------------------------------------------------ */
-
-/* -----------------------------------------------------------
-   TRUE MATCH TO ORIGINAL SITE PARTICLE BEHAVIOR
+   SOFT, SLOW, FEATHERED PARTICLES (MATCHES MAIN SITE)
 ----------------------------------------------------------- */
 
 const bg = document.getElementById("bgAnimation");
@@ -257,36 +193,37 @@ const bg = document.getElementById("bgAnimation");
 function spawnParticle() {
     const particle = document.createElement("span");
 
-    /* Larger particles: 20–60px */
-    const size = Math.random() * 40 + 20;
+    /* Large particles: 40–120px */
+    const size = Math.random() * 80 + 40;
     particle.style.width = size + "px";
     particle.style.height = size + "px";
 
     /* Random horizontal position */
     particle.style.left = Math.random() * window.innerWidth + "px";
 
-    /* Start slightly below the screen */
-    particle.style.bottom = "-80px";
+    /* Start below screen */
+    particle.style.bottom = "-120px";
 
-    /* Slow animation: 18–35 seconds */
-    particle.style.animationDuration = (Math.random() * 17 + 18) + "s";
+    /* Very slow animation: 28–55 seconds */
+    particle.style.animationDuration = (Math.random() * 27 + 28) + "s";
 
-    /* Random delay for natural staggering */
-    particle.style.animationDelay = (Math.random() * 6) + "s";
+    /* Random delay */
+    particle.style.animationDelay = (Math.random() * 10) + "s";
 
     bg.appendChild(particle);
 
     /* Remove after animation completes */
-    setTimeout(() => particle.remove(), 40000);
+    setTimeout(() => particle.remove(), 60000);
 }
 
-/* Start with 40 particles */
-for (let i = 0; i < 40; i++) {
+/* Start with 20 particles */
+for (let i = 0; i < 20; i++) {
     spawnParticle();
 }
 
-/* Add a new one every 900ms */
-setInterval(spawnParticle, 900);
+/* Add a new one every 2 seconds */
+setInterval(spawnParticle, 2000);
+
 /* -----------------------------------------------------------
    CALCULATOR LOGIC
 ----------------------------------------------------------- */
