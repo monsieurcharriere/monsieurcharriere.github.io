@@ -15,11 +15,11 @@
 <style>
 
 /* -----------------------------------------------------------
-   SOFT, FEATHERED, SUBTLE BACKGROUND (MATCHES MAIN SITE)
+   SOFT, FEATHERED, SUBTLE BACKGROUND (BRIGHTER + START ON PAGE)
 ----------------------------------------------------------- */
 
 :root {
-    --dot-color: rgba(255, 255, 255, 0.14);
+    --dot-color: rgba(255, 255, 255, 0.22); /* brighter but still soft */
 }
 
 .bg-animation {
@@ -36,14 +36,14 @@
     border-radius: 50%;
     background: var(--dot-color);
     filter: blur(8px);
-    opacity: 0.12;
+    opacity: 0.18; /* slightly brighter */
     animation: floatUp linear infinite;
 }
 
 @keyframes floatUp {
     0% {
         transform: translateY(0) scale(1);
-        opacity: 0.12;
+        opacity: 0.18;
     }
     100% {
         transform: translateY(-2000px) scale(0.7);
@@ -185,7 +185,7 @@ button:hover {
 <script>
 
 /* -----------------------------------------------------------
-   SOFT, SLOW, FEATHERED PARTICLES (MATCHES MAIN SITE)
+   SOFT, SLOW, FEATHERED PARTICLES (BRIGHTER + START ON PAGE)
 ----------------------------------------------------------- */
 
 const bg = document.getElementById("bgAnimation");
@@ -201,8 +201,9 @@ function spawnParticle() {
     /* Random horizontal position */
     particle.style.left = Math.random() * window.innerWidth + "px";
 
-    /* Start below screen */
-    particle.style.bottom = "-120px";
+    /* NEW: Start anywhere from below screen to fully on screen */
+    const startY = Math.random() * window.innerHeight - 120;
+    particle.style.bottom = startY + "px";
 
     /* Very slow animation: 28–55 seconds */
     particle.style.animationDuration = (Math.random() * 27 + 28) + "s";
@@ -216,7 +217,7 @@ function spawnParticle() {
     setTimeout(() => particle.remove(), 60000);
 }
 
-/* Start with 20 particles */
+/* Start with 20 particles already visible */
 for (let i = 0; i < 20; i++) {
     spawnParticle();
 }
