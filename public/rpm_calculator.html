@@ -10,6 +10,41 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
   <style>
+    /* Background animation container */
+.bg-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    background: #0f0f0f; /* fallback */
+}
+
+/* Animated floating dots */
+.bg-animation span {
+    position: absolute;
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    animation: move 10s linear infinite;
+    border-radius: 50%;
+}
+
+/* Keyframes for movement */
+@keyframes move {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 0.4;
+    }
+    100% {
+        transform: translateY(-1000px) scale(0.5);
+        opacity: 0;
+    }
+}
+
     /* Make the top nav links larger and more obviously clickable */
 nav a {
     font-size: 1.25rem;       /* bigger text */
