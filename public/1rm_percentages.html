@@ -4,81 +4,89 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-   <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
-  <style>
-    /* Background animation container */
-.bg-animation {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    overflow: hidden;
-    background: #0f0f0f; /* fallback */
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+
+<style>
+
+/* -----------------------------------------------------------
+   EXACT BACKGROUND ANIMATION FROM YOUR LIVE SITE
+----------------------------------------------------------- */
+
+:root {
+    --background: #0f0f0f;
+    --dot-color: rgba(255, 255, 255, 0.08);
 }
 
-/* Animated floating dots */
+.bg-animation {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    background: var(--background);
+}
+
 .bg-animation span {
     position: absolute;
     display: block;
-    width: 20px;
-    height: 20px;
-    background: rgba(255, 255, 255, 0.08);
-    animation: move 10s linear infinite;
     border-radius: 50%;
+    background: var(--dot-color);
+    filter: blur(1px);
+    animation: animate linear infinite;
+    opacity: 0.35;
 }
 
-/* Keyframes for movement */
-@keyframes move {
+@keyframes animate {
     0% {
         transform: translateY(0) scale(1);
-        opacity: 0.4;
+        opacity: 0.35;
     }
     100% {
-        transform: translateY(-1000px) scale(0.5);
+        transform: translateY(-1200px) scale(0.4);
         opacity: 0;
     }
 }
 
-    /* Make the top nav links larger and more obviously clickable */
+/* -----------------------------------------------------------
+   NAV + SPACING + INPUT + BUTTON FIXES
+----------------------------------------------------------- */
+
 nav a {
-    font-size: 1.25rem;       /* bigger text */
-    font-weight: 600;         /* semi-bold */
-    color: #2563eb !important; /* Tailwind blue-600 */
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2563eb !important;
 }
 
 nav a:hover {
     text-decoration: underline;
 }
 
-/* Add a paragraph break worth of space below the nav */
 .site-header {
-    margin-bottom: 1.5rem; /* ~24px, equivalent to a paragraph break */
+    margin-bottom: 1.5rem;
 }
 
-/* Optional: add a tiny bit more breathing room inside the nav */
 nav {
     padding-bottom: 0.5rem;
 }
 
-  input[type="number"],
-  input[type="text"],
-  input,
-  textarea {
-      color: #000 !important;
-  }
+input[type="number"],
+input[type="text"],
+input,
+textarea {
+    color: #000 !important;
+}
 
-  input::placeholder {
-      color: #555 !important;
-  }
+input::placeholder {
+    color: #555 !important;
+}
+
 button {
-    background-color: #e5e7eb !important; /* light grey, visible on all backgrounds */
+    background-color: #e5e7eb !important;
     color: #000 !important;
     border: 1px solid #000 !important;
     padding: 8px 14px !important;
@@ -87,23 +95,20 @@ button {
 }
 
 button:hover {
-    background-color: #d1d5db !important; /* slightly darker hover */
+    background-color: #d1d5db !important;
 }
-
 
 </style>
 
-
-
-  <title>Pourcentages 1RM</title>
+<title>Pourcentages 1RM</title>
 </head>
 
 <body>
- <div class="bg-animation" id="bgAnimation"></div>
 
-    <div class="container mx-auto px-4 py-12 max-w-md">
-        
-        
+<div class="bg-animation" id="bgAnimation"></div>
+
+<div class="container mx-auto px-4 py-12 max-w-md">
+
 <div class="flex flex-col items-center mb-8">
 <header class="site-header">
   <div class="wrapper">
@@ -137,6 +142,41 @@ button:hover {
 </footer>
 
 <script>
+
+/* -----------------------------------------------------------
+   EXACT PARTICLE GENERATOR FROM YOUR LIVE SITE
+----------------------------------------------------------- */
+
+const bg = document.getElementById("bgAnimation");
+
+function spawnParticle() {
+    const particle = document.createElement("span");
+
+    const size = Math.random() * 14 + 6;
+    particle.style.width = size + "px";
+    particle.style.height = size + "px";
+
+    particle.style.left = Math.random() * window.innerWidth + "px";
+    particle.style.bottom = "-60px";
+
+    particle.style.animationDuration = (Math.random() * 12 + 8) + "s";
+    particle.style.animationDelay = Math.random() * 4 + "s";
+
+    bg.appendChild(particle);
+
+    setTimeout(() => particle.remove(), 20000);
+}
+
+for (let i = 0; i < 50; i++) {
+    spawnParticle();
+}
+
+setInterval(spawnParticle, 450);
+
+/* -----------------------------------------------------------
+   CALCULATOR LOGIC
+----------------------------------------------------------- */
+
 function calculate() {
     const rm = parseFloat(document.getElementById("rmInput").value);
     const output = document.getElementById("results");
@@ -157,6 +197,7 @@ function calculate() {
 
     output.innerHTML = html;
 }
+
 </script>
 
 </body>
