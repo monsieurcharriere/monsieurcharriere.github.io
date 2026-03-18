@@ -185,12 +185,13 @@ button:hover {
 <script>
 
 /* -----------------------------------------------------------
-   SOFT, SLOW, FEATHERED PARTICLES (BRIGHTER + START ON PAGE)
+   SOFT, SLOW, FEATHERED PARTICLES
+   INITIAL POPULATION ANYWHERE + NEW ONES FROM BOTTOM ONLY
 ----------------------------------------------------------- */
 
 const bg = document.getElementById("bgAnimation");
 
-function spawnParticle() {
+function spawnParticle(startAnywhere = false) {
     const particle = document.createElement("span");
 
     /* Large particles: 40–120px */
@@ -201,9 +202,16 @@ function spawnParticle() {
     /* Random horizontal position */
     particle.style.left = Math.random() * window.innerWidth + "px";
 
-    /* NEW: Start anywhere from below screen to fully on screen */
-    const startY = Math.random() * window.innerHeight - 120;
-    particle.style.bottom = startY + "px";
+    /* NEW LOGIC:
+       - If startAnywhere = true → place particle anywhere on screen
+       - Otherwise → spawn from bottom only
+    */
+    if (startAnywhere) {
+        const startY = Math.random() * window.innerHeight - 120;
+        particle.style.bottom = startY + "px";
+    } else {
+        particle.style.bottom = "-120px"; // bottom only
+    }
 
     /* Very slow animation: 28–55 seconds */
     particle.style.animationDuration = (Math.random() * 27 + 28) + "s";
@@ -217,13 +225,14 @@ function spawnParticle() {
     setTimeout(() => particle.remove(), 60000);
 }
 
-/* Start with 20 particles already visible */
+/* INITIAL POPULATION: fill screen with particles */
 for (let i = 0; i < 20; i++) {
-    spawnParticle();
+    spawnParticle(true); // start anywhere
 }
 
-/* Add a new one every 2 seconds */
-setInterval(spawnParticle, 2000);
+/* NEW PARTICLES: only from bottom */
+setInterval(() => spawnParticle(false), 2000);
+
 
 /* -----------------------------------------------------------
    CALCULATOR LOGIC
