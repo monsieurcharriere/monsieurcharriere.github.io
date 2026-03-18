@@ -411,33 +411,6 @@ for (let i = 0; i < 20; i++) {
 /* Add a new one every 2 seconds */
 setInterval(spawnParticle, 2000);
 
-/* -----------------------------------------------------------
-   CALCULATOR LOGIC
------------------------------------------------------------ */
-
-function calculate() {
-    const rpm = parseFloat(document.getElementById("rpmInput").value);
-    const output = document.getElementById("results");
-
-    if (isNaN(rpm)) {
-        output.innerHTML = "<p>Veuillez entrer un nombre valide.</p>";
-        return;
-    }
-
-    const percentages = [50, 60, 70, 80, 90, 100, 110, 120];
-
-    let html = "<h3>Résultats</h3><ul>";
-    percentages.forEach(p => {
-        const value = rpm * (p / 100);
-        html += `<li>${p}% = ${value.toFixed(2)}</li>`;
-    });
-    html += "</ul>";
-
-    output.innerHTML = html;
-}
-
-</script>
-
 </body>
 </html>
 
