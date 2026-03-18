@@ -173,6 +173,32 @@ nav .sep {
     opacity: 0.6;
     padding: 0 4px;
 }
+  /* Force the input section to behave like a full-width mobile block */
+.wrapper {
+    width: 100%;
+}
+
+/* Make label, input, and button stack cleanly */
+.wrapper label {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+/* Full-width input */
+.wrapper input[type="number"],
+.wrapper input[type="text"] {
+    width: 100% !important;
+    box-sizing: border-box;
+    margin-bottom: 1rem;
+}
+
+/* Full-width button */
+.wrapper button {
+    width: 100% !important;
+    box-sizing: border-box;
+    margin-top: 0.5rem;
+}
 </style>
 
 <title>Pourcentages 1RM</title>
