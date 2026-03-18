@@ -369,103 +369,66 @@ button:hover {
 </footer>
 
 <script>
-
 /* -----------------------------------------------------------
    SOFT, SLOW, FEATHERED PARTICLES (BRIGHTER + START ON PAGE)
 ----------------------------------------------------------- */
 
 const bg = document.getElementById("bgAnimation");
 
-function spawnParticle() {
+function spawnParticle(startAnywhere = false) {
     const particle = document.createElement("span");
 
-    /* Large particles: 40–120px */
     const size = Math.random() * 80 + 40;
     particle.style.width = size + "px";
     particle.style.height = size + "px";
 
-    /* Random horizontal position */
     particle.style.left = Math.random() * window.innerWidth + "px";
 
-    /* NEW: Start anywhere from below screen to fully on screen */
-    const startY = Math.random() * window.innerHeight - 120;
-    particle.style.bottom = startY + "px";
+    if (startAnywhere) {
+        const startY = Math.random() * window.innerHeight - 120;
+        particle.style.bottom = startY + "px";
+    } else {
+        particle.style.bottom = "-120px";
+    }
 
-    /* Very slow animation: 28–55 seconds */
     particle.style.animationDuration = (Math.random() * 27 + 28) + "s";
-
-    /* Random delay */
     particle.style.animationDelay = (Math.random() * 10) + "s";
 
     bg.appendChild(particle);
 
-    /* Remove after animation completes */
     setTimeout(() => particle.remove(), 60000);
 }
 
-/* Start with 20 particles already visible */
 for (let i = 0; i < 20; i++) {
-    spawnParticle();
+    spawnParticle(true);
 }
 
-/* Add a new one every 2 seconds */
-setInterval(spawnParticle, 2000);
+setInterval(() => spawnParticle(false), 2000);
 
 /* -----------------------------------------------------------
    CALCULATOR LOGIC
 ----------------------------------------------------------- */
 
 function calculate() {
-    const rpm = parseFloat(document.getElementById("rpmInput").value);
+    const rm = parseFloat(document.getElementById("rmInput").value);
     const output = document.getElementById("results");
 
-    if (isNaN(rpm)) {
+    if (isNaN(rm)) {
         output.innerHTML = "<p>Veuillez entrer un nombre valide.</p>";
         return;
     }
 
-    const percentages = [50, 60, 70, 80, 90, 100, 110, 120];
+    const percentages = [50, 60, 70, 72.5, 75, 80, 82.5, 85, 87.5, 90, 92.5, 95];
 
     let html = "<h3>Résultats</h3><ul>";
     percentages.forEach(p => {
-        const value = rpm * (p / 100);
+        const value = rm * (p / 100);
         html += `<li>${p}% = ${value.toFixed(2)}</li>`;
     });
     html += "</ul>";
 
     output.innerHTML = html;
 }
-
-</script>
-
-</body>
-</html>
-
-/* -----------------------------------------------------------
-   CALCULATOR LOGIC
------------------------------------------------------------ */
-
-function calculate() {
-    const rpm = parseFloat(document.getElementById("rpmInput").value);
-    const output = document.getElementById("results");
-
-    if (isNaN(rpm)) {
-        output.innerHTML = "<p>Veuillez entrer un nombre valide.</p>";
-        return;
-    }
-
-    const percentages = [50, 60, 70, 80, 90, 100, 110, 120];
-
-    let html = "<h3>Résultats</h3><ul>";
-    percentages.forEach(p => {
-        const value = rpm * (p / 100);
-        html += `<li>${p}% = ${value.toFixed(2)}</li>`;
-    });
-    html += "</ul>";
-
-    output.innerHTML = html;
-}
-
 </script>
 
 </body>
