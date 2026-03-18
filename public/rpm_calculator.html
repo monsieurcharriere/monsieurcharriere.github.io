@@ -55,16 +55,25 @@
    NAV + SPACING + INPUT + BUTTON FIXES
 ----------------------------------------------------------- */
 
+/* Improved top navigation links */
 nav a {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 600;
-    color: #2563eb !important;
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.85) !important;
+    text-decoration: none;
+    padding: 4px 6px;
+    transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+
+nav a strong {
+    color: #ffffff !important; /* active page */
 }
 
 nav a:hover {
-    text-decoration: underline;
+    color: #ffffff !important;
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.45);
 }
-
 .site-header {
     margin-bottom: 1.5rem;
 }
