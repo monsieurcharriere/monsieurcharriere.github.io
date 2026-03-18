@@ -139,7 +139,40 @@ button {
 button:hover {
     background-color: #d1d5db !important;
 }
+/* Make top nav links fit on one line on mobile */
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem; /* space between links */
+    flex-wrap: nowrap; /* prevent wrapping */
+    white-space: nowrap; /* force single line */
+}
 
+/* Style links to match your site's aesthetic */
+nav a {
+    font-size: 1.05rem; /* slightly smaller so they fit */
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    color: rgba(255, 255, 255, 0.85) !important;
+    text-decoration: none;
+    padding: 4px 6px;
+    transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+
+nav a strong {
+    color: #ffffff !important;
+}
+
+nav a:hover {
+    color: #ffffff !important;
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.45);
+}
+
+/* Make the separator smaller and consistent */
+nav .sep {
+    opacity: 0.6;
+    padding: 0 4px;
+}
 </style>
 
 <title>Pourcentages 1RM</title>
