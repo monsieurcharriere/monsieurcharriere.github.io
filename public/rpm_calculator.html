@@ -248,31 +248,45 @@ nav .sep {
    PARTICLE GENERATOR
 ----------------------------------------------------------- */
 
+/* -----------------------------------------------------------
+   TRUE MATCH TO ORIGINAL SITE PARTICLE BEHAVIOR
+----------------------------------------------------------- */
+
 const bg = document.getElementById("bgAnimation");
 
 function spawnParticle() {
     const particle = document.createElement("span");
 
-    const size = Math.random() * 14 + 6;
+    /* Larger particles: 20–60px */
+    const size = Math.random() * 40 + 20;
     particle.style.width = size + "px";
     particle.style.height = size + "px";
 
+    /* Random horizontal position */
     particle.style.left = Math.random() * window.innerWidth + "px";
-    particle.style.bottom = "-60px";
 
-    particle.style.animationDuration = (Math.random() * 12 + 8) + "s";
-    particle.style.animationDelay = Math.random() * 4 + "s";
+    /* Start slightly below the screen */
+    particle.style.bottom = "-80px";
+
+    /* Slow animation: 18–35 seconds */
+    particle.style.animationDuration = (Math.random() * 17 + 18) + "s";
+
+    /* Random delay for natural staggering */
+    particle.style.animationDelay = (Math.random() * 6) + "s";
 
     bg.appendChild(particle);
 
-    setTimeout(() => particle.remove(), 20000);
+    /* Remove after animation completes */
+    setTimeout(() => particle.remove(), 40000);
 }
 
-for (let i = 0; i < 50; i++) {
+/* Start with 40 particles */
+for (let i = 0; i < 40; i++) {
     spawnParticle();
 }
 
-setInterval(spawnParticle, 450);
+/* Add a new one every 900ms */
+setInterval(spawnParticle, 900);
 
 /* -----------------------------------------------------------
    CALCULATOR LOGIC
