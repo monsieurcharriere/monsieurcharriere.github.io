@@ -15,12 +15,11 @@
 <style>
 
 /* -----------------------------------------------------------
-   EXACT BACKGROUND ANIMATION FROM YOUR LIVE SITE
+   BACKGROUND ANIMATION (LIGHTER, OVERLAY ONLY)
 ----------------------------------------------------------- */
 
 :root {
-    --background: #0f0f0f;
-    --dot-color: rgba(255, 255, 255, 0.08);
+    --dot-color: rgba(255, 255, 255, 0.18);
 }
 
 .bg-animation {
@@ -28,7 +27,7 @@
     inset: 0;
     z-index: -1;
     overflow: hidden;
-    background: var(--background);
+    background: transparent; /* let theme background show */
 }
 
 .bg-animation span {
@@ -38,13 +37,13 @@
     background: var(--dot-color);
     filter: blur(1px);
     animation: animate linear infinite;
-    opacity: 0.35;
+    opacity: 0.6;
 }
 
 @keyframes animate {
     0% {
         transform: translateY(0) scale(1);
-        opacity: 0.35;
+        opacity: 0.6;
     }
     100% {
         transform: translateY(-1200px) scale(0.4);
@@ -144,7 +143,7 @@ button:hover {
 <script>
 
 /* -----------------------------------------------------------
-   EXACT PARTICLE GENERATOR FROM YOUR LIVE SITE
+   PARTICLE GENERATOR
 ----------------------------------------------------------- */
 
 const bg = document.getElementById("bgAnimation");
