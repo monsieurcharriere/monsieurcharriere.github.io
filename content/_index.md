@@ -36,13 +36,13 @@ links:
 
   - href: https://www.barbellcalculator.com/
     icon: fas fa-calculator
-    title: Barbell Calculator
-    description: Assistance pour trouver le poids sur la barre
+    title: Calculatrice de Barbell
+    description: Assisatance pour calculer les plaques + barre
 
   - href: https://monsieurcharriere.github.io/1rm_percentages.html
     icon: fas fa-calculator
-    title: Estimateur de 1RM et calculatrice % de 1RM/RPM
-    description: Calculatrice pour trouver les % de votre 1RM ou RPM.hu
+    title: Calculatrice de 1RM et % de 1RM ou RPM
+    description: Calculatrice pour trouver les % de votre 1RM ou RPM.
 
   - href: https://timer.crosshero.com/
     icon: fas fa-stopwatch
