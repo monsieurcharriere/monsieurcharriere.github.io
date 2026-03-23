@@ -11,16 +11,18 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-body {
-    background-color: #0f0f0f !important;
-}
 
 /* -----------------------------------------------------------
-   SOFT, FEATHERED BACKGROUND (MATCHES OTHER CALCULATORS)
+   MATCHED BACKGROUND ANIMATION (IDENTICAL TO OTHER PAGES)
 ----------------------------------------------------------- */
 
 :root {
     --dot-color: rgba(255, 255, 255, 0.22);
+}
+
+body {
+    background-color: #0f0f0f !important;
+    font-family: 'Inter', sans-serif;
 }
 
 .bg-animation {
@@ -46,7 +48,7 @@ body {
 }
 
 /* -----------------------------------------------------------
-   INPUT + BUTTON STYLING
+   INPUT + BUTTON STYLING (MATCHES OTHER CALCULATORS)
 ----------------------------------------------------------- */
 
 input, select {
@@ -97,21 +99,21 @@ button:hover {
 <div class="container mx-auto px-4 py-12 max-w-md">
   <div class="wrapper">
 
-    <h1 class="text-2xl font-bold mb-2">Calculateur Mifflin–St Jeor</h1>
+    <h1 class="text-2xl font-bold mb-2 text-white">Calculateur Mifflin–St Jeor</h1>
 
-    <p style="opacity:0.85; font-size:0.9rem; margin-top:-0.5rem; margin-bottom:1rem;">
+    <p class="text-white" style="opacity:0.85; font-size:0.9rem; margin-top:-0.5rem; margin-bottom:1rem;">
       Calcule votre métabolisme de base (BMR) et vos besoins caloriques quotidiens selon la formule de Mifflin–St Jeor.
     </p>
 
     <!-- SEX -->
-    <label>Sexe assigné à la naissance</label>
+    <label class="text-white">Sexe assigné à la naissance</label>
     <select id="sexInput">
       <option value="male">Homme</option>
       <option value="female">Femme</option>
     </select>
 
     <!-- WEIGHT -->
-    <label>Poids</label>
+    <label class="text-white">Poids</label>
     <input type="number" id="weightInput" placeholder="Entrer votre poids">
     <select id="weightUnit">
       <option value="kg">kg</option>
@@ -119,7 +121,7 @@ button:hover {
     </select>
 
     <!-- HEIGHT UNIT SELECTOR -->
-    <label>Taille</label>
+    <label class="text-white">Taille</label>
     <select id="heightMode" onchange="toggleHeightMode()">
       <option value="cm">Centimètres</option>
       <option value="ftin">Pieds + pouces</option>
@@ -135,11 +137,11 @@ button:hover {
     </div>
 
     <!-- AGE -->
-    <label>Âge</label>
+    <label class="text-white">Âge</label>
     <input type="number" id="ageInput" placeholder="Entrer votre âge">
 
     <!-- CALC TYPE -->
-    <label>Type de calcul</label>
+    <label class="text-white">Type de calcul</label>
     <select id="calcType" onchange="toggleActivity()">
       <option value="bmr">BMR seulement</option>
       <option value="tdee">BMR + niveau d’activité</option>
@@ -147,7 +149,7 @@ button:hover {
 
     <!-- ACTIVITY LEVEL -->
     <div id="activityWrapper" style="display:none;">
-      <label>Niveau d’activité</label>
+      <label class="text-white">Niveau d’activité</label>
       <select id="activityInput">
         <option value="1.2">Sédentaire (×1.2)</option>
         <option value="1.375">Légèrement actif (×1.375)</option>
@@ -158,7 +160,7 @@ button:hover {
 
     <button onclick="calculate()">Calculer</button>
 
-    <div id="results" class="mt-4"></div>
+    <div id="results" class="mt-4 text-white"></div>
 
   </div>
 </div>
@@ -166,7 +168,7 @@ button:hover {
 <script>
 
 /* -----------------------------------------------------------
-   BACKGROUND PARTICLES
+   BACKGROUND PARTICLES (IDENTICAL TO OTHER PAGES)
 ----------------------------------------------------------- */
 
 const bg = document.getElementById("bgAnimation");
@@ -249,12 +251,12 @@ function calculate() {
     let bmr = 10 * weightKg + 6.25 * heightCm - 5 * age;
     bmr += sex === "male" ? 5 : -161;
 
-    let resultHtml = `<h3>BMR : ${bmr.toFixed(0)} calories/jour</h3>`;
+    let resultHtml = `<h3 class="text-xl font-semibold">BMR : ${bmr.toFixed(0)} calories/jour</h3>`;
 
     if (calcType === "tdee") {
         const activity = parseFloat(document.getElementById("activityInput").value);
         const tdee = bmr * activity;
-        resultHtml += `<p>Besoins caloriques quotidiens : <strong>${tdee.toFixed(0)} calories/jour</strong></p>`;
+        resultHtml += `<p class="mt-2">Besoins caloriques quotidiens : <strong>${tdee.toFixed(0)} calories/jour</strong></p>`;
     }
 
     document.getElementById("results").innerHTML = resultHtml;
