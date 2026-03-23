@@ -41,7 +41,7 @@ links:
 
   - href: https://monsieurcharriere.github.io/1rm_percentages.html
     icon: fas fa-calculator
-    title: Calculatrice % de 1RM ou RPM
+    title: Estimateur de 1RM et calculatrice % de 1RM/RPM
     description: Calculatrice pour trouver les % de votre 1RM ou RPM.hu
 
   - href: https://timer.crosshero.com/
