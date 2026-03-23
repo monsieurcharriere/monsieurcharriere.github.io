@@ -13,7 +13,7 @@
 <style>
 
 /* -----------------------------------------------------------
-   MATCHED BACKGROUND ANIMATION (IDENTICAL TO OTHER PAGES)
+   IDENTICAL BACKGROUND TO YOUR OTHER 3 CALCULATORS
 ----------------------------------------------------------- */
 
 :root {
@@ -21,7 +21,7 @@
 }
 
 body {
-    background-color: #0f0f0f !important;
+    background-color: #111 !important;
     font-family: 'Inter', sans-serif;
 }
 
@@ -30,6 +30,7 @@ body {
     inset: 0;
     z-index: -1;
     overflow: hidden;
+    background: transparent;
 }
 
 .bg-animation span {
@@ -140,23 +141,14 @@ button:hover {
     <label class="text-white">Âge</label>
     <input type="number" id="ageInput" placeholder="Entrer votre âge">
 
-    <!-- CALC TYPE -->
-    <label class="text-white">Type de calcul</label>
-    <select id="calcType" onchange="toggleActivity()">
-      <option value="bmr">BMR seulement</option>
-      <option value="tdee">BMR + niveau d’activité</option>
-    </select>
-
     <!-- ACTIVITY LEVEL -->
-    <div id="activityWrapper" style="display:none;">
-      <label class="text-white">Niveau d’activité</label>
-      <select id="activityInput">
-        <option value="1.2">Sédentaire (×1.2)</option>
-        <option value="1.375">Légèrement actif (×1.375)</option>
-        <option value="1.55">Modérément actif (×1.55)</option>
-        <option value="1.725">Très actif (×1.725)</option>
-      </select>
-    </div>
+    <label class="text-white">Niveau d’activité</label>
+    <select id="activityInput">
+      <option value="1.2">Sédentaire (×1.2)</option>
+      <option value="1.375">Légèrement actif (×1.375)</option>
+      <option value="1.55">Modérément actif (×1.55)</option>
+      <option value="1.725">Très actif (×1.725)</option>
+    </select>
 
     <button onclick="calculate()">Calculer</button>
 
@@ -207,16 +199,6 @@ function toggleHeightMode() {
 }
 
 /* -----------------------------------------------------------
-   ACTIVITY DROPDOWN VISIBILITY
------------------------------------------------------------ */
-
-function toggleActivity() {
-    const type = document.getElementById("calcType").value;
-    document.getElementById("activityWrapper").style.display =
-        type === "tdee" ? "block" : "none";
-}
-
-/* -----------------------------------------------------------
    CALCULATION LOGIC
 ----------------------------------------------------------- */
 
@@ -226,7 +208,7 @@ function calculate() {
     const weightUnit = document.getElementById("weightUnit").value;
     const heightMode = document.getElementById("heightMode").value;
     const age = parseFloat(document.getElementById("ageInput").value);
-    const calcType = document.getElementById("calcType").value;
+    const activity = parseFloat(document.getElementById("activityInput").value);
 
     let heightCm;
 
@@ -251,15 +233,12 @@ function calculate() {
     let bmr = 10 * weightKg + 6.25 * heightCm - 5 * age;
     bmr += sex === "male" ? 5 : -161;
 
-    let resultHtml = `<h3 class="text-xl font-semibold">BMR : ${bmr.toFixed(0)} calories/jour</h3>`;
+    const tdee = bmr * activity;
 
-    if (calcType === "tdee") {
-        const activity = parseFloat(document.getElementById("activityInput").value);
-        const tdee = bmr * activity;
-        resultHtml += `<p class="mt-2">Besoins caloriques quotidiens : <strong>${tdee.toFixed(0)} calories/jour</strong></p>`;
-    }
-
-    document.getElementById("results").innerHTML = resultHtml;
+    document.getElementById("results").innerHTML = `
+        <h3 class="text-xl font-semibold">BMR : ${bmr.toFixed(0)} calories/jour</h3>
+        <p class="mt-2">Apport calorique quotidien estimé : <strong>${tdee.toFixed(0)} calories/jour</strong></p>
+    `;
 }
 
 </script>
