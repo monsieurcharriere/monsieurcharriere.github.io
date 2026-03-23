@@ -13,11 +13,11 @@
 <style>
 
 /* -----------------------------------------------------------
-   EXACT BACKGROUND FROM 1RM_PERCENTAGES.HTML
+   EXACT BACKGROUND FROM YOUR WORKING CALCULATORS
 ----------------------------------------------------------- */
 
 :root {
-    --dot-color: rgba(255, 255, 255, 0.25);
+    --dot-color: rgba(255, 255, 255, 0.22);
 }
 
 body {
@@ -30,6 +30,7 @@ body {
     inset: 0;
     z-index: -1;
     overflow: hidden;
+    background: transparent;
 }
 
 .bg-animation span {
@@ -37,18 +38,18 @@ body {
     display: block;
     border-radius: 50%;
     background: var(--dot-color);
-    filter: blur(10px);
-    opacity: 0.22;
+    filter: blur(8px);
+    opacity: 0.18;
     animation: floatUp linear infinite;
 }
 
 @keyframes floatUp {
-    0% { transform: translateY(0) scale(1); opacity: 0.22; }
+    0% { transform: translateY(0) scale(1); opacity: 0.18; }
     100% { transform: translateY(-2000px) scale(0.7); opacity: 0; }
 }
 
 /* -----------------------------------------------------------
-   INPUT + BUTTON STYLING (MATCHES OTHER CALCULATORS)
+   INPUT + BUTTON STYLING (EXACT MATCH)
 ----------------------------------------------------------- */
 
 input, select {
@@ -76,14 +77,21 @@ button:hover {
     width: 100%;
 }
 
-.wrapper input, .wrapper select {
+.wrapper label {
+    display: block;
     width: 100%;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.wrapper input,
+.wrapper select {
+    width: 100% !important;
     box-sizing: border-box;
+    margin-bottom: 1rem;
 }
 
 .wrapper button {
-    width: 100%;
+    width: 100% !important;
     margin-top: 0.5rem;
 }
 
@@ -115,7 +123,7 @@ a.return-link:hover {
     <h1 class="text-2xl font-bold mb-2 text-white">Calculateur Mifflin–St Jeor</h1>
 
     <p class="text-white" style="opacity:0.85; font-size:0.9rem; margin-top:-0.5rem; margin-bottom:1rem;">
-      Calcule votre métabolisme de base (BMR) et vos besoins caloriques quotidiens selon la formule de Mifflin–St Jeor.
+      Calcule votre métabolisme de base (BMR) et vos besoins caloriques quotidiens.
     </p>
 
     <!-- SEX -->
@@ -174,29 +182,32 @@ a.return-link:hover {
 <script>
 
 /* -----------------------------------------------------------
-   BACKGROUND PARTICLES — EXACT COPY OF WORKING PAGE
+   EXACT PARTICLE SYSTEM FROM YOUR WORKING PAGE
 ----------------------------------------------------------- */
 
 const bg = document.getElementById("bgAnimation");
 
 function spawnParticle(startAnywhere = false) {
-    const p = document.createElement("span");
-    const size = Math.random() * 70 + 40;
-    p.style.width = size + "px";
-    p.style.height = size + "px";
-    p.style.left = Math.random() * window.innerWidth + "px";
+    const particle = document.createElement("span");
+
+    const size = Math.random() * 80 + 40;
+    particle.style.width = size + "px";
+    particle.style.height = size + "px";
+
+    particle.style.left = Math.random() * window.innerWidth + "px";
 
     if (startAnywhere) {
-        p.style.bottom = (Math.random() * window.innerHeight - 120) + "px";
+        particle.style.bottom = (Math.random() * window.innerHeight - 120) + "px";
     } else {
-        p.style.bottom = "-120px";
+        particle.style.bottom = "-120px";
     }
 
-    p.style.animationDuration = (Math.random() * 25 + 25) + "s";
-    p.style.animationDelay = (Math.random() * 10) + "s";
+    particle.style.animationDuration = (Math.random() * 27 + 28) + "s";
+    particle.style.animationDelay = (Math.random() * 10) + "s";
 
-    bg.appendChild(p);
-    setTimeout(() => p.remove(), 60000);
+    bg.appendChild(particle);
+
+    setTimeout(() => particle.remove(), 60000);
 }
 
 for (let i = 0; i < 20; i++) spawnParticle(true);
@@ -240,10 +251,8 @@ function calculate() {
         return;
     }
 
-    // Convert lbs → kg
     const weightKg = weightUnit === "lbs" ? weight * 0.453592 : weight;
 
-    // Mifflin–St Jeor
     let bmr = 10 * weightKg + 6.25 * heightCm - 5 * age;
     bmr += sex === "male" ? 5 : -161;
 
