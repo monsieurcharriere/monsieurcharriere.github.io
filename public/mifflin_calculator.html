@@ -162,7 +162,8 @@ a.return-link:hover {
     </select>
 </div>
 
-<input type="number" id="weightInput" placeholder="Entrer votre poids">
+<input type="number" id="weightInput" placeholder="Entrer votre masse en kg">
+
 
 
     <!-- HEIGHT IN CM -->
@@ -277,6 +278,19 @@ function calculate() {
         return;
     }
 
+// Update placeholder when weight unit changes
+document.getElementById("weightUnit").addEventListener("change", function () {
+    const unit = this.value;
+    const weightInput = document.getElementById("weightInput");
+
+    if (unit === "lbs") {
+        weightInput.placeholder = "Entrer votre poids en livres";
+    } else {
+        weightInput.placeholder = "Entrer votre masse en kg";
+    }
+});
+
+  
     const weightKg = weightUnit === "lbs" ? weight * 0.453592 : weight;
 
     let bmr = 10 * weightKg + 6.25 * heightCm - 5 * age;
