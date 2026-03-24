@@ -17,7 +17,7 @@
 ----------------------------------------------------------- */
 
 :root {
-    --bg-color: #1a1a2e;       /* THIS is the correct color */
+    --bg-color: #1a1a2e;
     --dot-color: rgba(255, 255, 255, 0.22);
 }
 
@@ -100,12 +100,13 @@ button:hover {
     margin-top: 0.5rem;
 }
 
+/* Return link styling */
 a.return-link {
     display: block;
     text-align: center;
     margin-top: 2rem;
     color: rgba(255, 255, 255, 0.85);
-    text-decoration: none;        /* ← removes underline */
+    text-decoration: none;
     font-weight: 500;
     transition: color 0.25s ease, text-shadow 0.25s ease;
 }
@@ -114,6 +115,8 @@ a.return-link:hover {
     color: #ffffff;
     text-shadow: 0 0 6px rgba(255, 255, 255, 0.45);
 }
+
+/* Inline label + dropdown */
 .inline-label {
     display: flex;
     justify-content: space-between;
@@ -126,7 +129,6 @@ a.return-link:hover {
     margin: 0 !important;
     padding: 4px 6px;
 }
-
 
 </style>
 
@@ -143,7 +145,7 @@ a.return-link:hover {
     <h1 class="text-2xl font-bold mb-2 text-white">Calculatrice de TMR et d'apport calorique</h1>
 
     <p class="text-white" style="opacity:0.85; font-size:0.9rem; margin-top:-0.5rem; margin-bottom:1rem;">
-      Cet outil vous permet d'estimer votre taux de métabolisme au repos (TMR) et vos besoins caloriques quotidiens basé sur votre niveau d'activité. Cette calculatrice utilise la formule de Mifflin–St Jeor, qui est largement reconnue pour sa précision. Veuillez entrer vos informations ci-dessous pour obtenir une estimation personnalisée.
+      Cet outil estime votre taux de métabolisme au repos (TMR) et vos besoins caloriques quotidiens selon la formule de Mifflin–St Jeor.
     </p>
 
     <!-- SEX -->
@@ -154,41 +156,37 @@ a.return-link:hover {
     </select>
 
     <!-- WEIGHT -->
-  <div class="inline-label">
-    <label class="text-white">Poids</label>
-    <select id="weightUnit">
-      <option value="kg">kg</option>
-      <option value="lbs">lbs</option>
-    </select>
-</div>
-
-<input type="number" id="weightInput" placeholder="Entrer votre masse en kg">
-
-
-
-    <!-- HEIGHT IN CM -->
     <div class="inline-label">
-    <label class="text-white">Taille</label>
-    <select id="heightMode" onchange="toggleHeightMode()">
-      <option value="cm">cm</option>
-      <option value="ftin">pi + po</option>
-    </select>
-</div>
+        <label class="text-white">Poids</label>
+        <select id="weightUnit">
+          <option value="kg">kg</option>
+          <option value="lbs">lbs</option>
+        </select>
+    </div>
 
-<!-- HEIGHT IN CM -->
-<input type="number" id="heightCm" placeholder="Taille en centimètres">
+    <input type="number" id="weightInput" placeholder="Entrer votre masse en kg">
 
-<!-- HEIGHT IN FEET + INCHES -->
-<div id="heightFeetInches" style="display:none;">
-  <input type="number" id="heightFeet" placeholder="Pieds">
-  <input type="number" id="heightInches" placeholder="Pouces">
-</div>
+    <!-- HEIGHT -->
+    <div class="inline-label">
+        <label class="text-white">Taille</label>
+        <select id="heightMode" onchange="toggleHeightMode()">
+          <option value="cm">cm</option>
+          <option value="ftin">pi + po</option>
+        </select>
+    </div>
+
+    <input type="number" id="heightCm" placeholder="Taille en centimètres">
+
+    <div id="heightFeetInches" style="display:none;">
+      <input type="number" id="heightFeet" placeholder="Pieds">
+      <input type="number" id="heightInches" placeholder="Pouces">
+    </div>
 
     <!-- AGE -->
     <label class="text-white">Âge</label>
     <input type="number" id="ageInput" placeholder="Entrer votre âge">
 
-    <!-- ACTIVITY LEVEL -->
+    <!-- ACTIVITY -->
     <label class="text-white">Niveau d’activité</label>
     <select id="activityInput">
       <option value="1.2">Sédentaire — peu ou pas d’exercice</option>
@@ -251,6 +249,21 @@ function toggleHeightMode() {
 }
 
 /* -----------------------------------------------------------
+   UPDATE WEIGHT PLACEHOLDER WHEN UNIT CHANGES
+----------------------------------------------------------- */
+
+document.getElementById("weightUnit").addEventListener("change", function () {
+    const unit = this.value;
+    const weightInput = document.getElementById("weightInput");
+
+    if (unit === "lbs") {
+        weightInput.placeholder = "Entrer votre poids en livres";
+    } else {
+        weightInput.placeholder = "Entrer votre masse en kg";
+    }
+});
+
+/* -----------------------------------------------------------
    CALCULATION LOGIC
 ----------------------------------------------------------- */
 
@@ -278,19 +291,6 @@ function calculate() {
         return;
     }
 
-// Update placeholder when weight unit changes
-document.getElementById("weightUnit").addEventListener("change", function () {
-    const unit = this.value;
-    const weightInput = document.getElementById("weightInput");
-
-    if (unit === "lbs") {
-        weightInput.placeholder = "Entrer votre poids en livres";
-    } else {
-        weightInput.placeholder = "Entrer votre masse en kg";
-    }
-});
-
-  
     const weightKg = weightUnit === "lbs" ? weight * 0.453592 : weight;
 
     let bmr = 10 * weightKg + 6.25 * heightCm - 5 * age;
@@ -300,7 +300,7 @@ document.getElementById("weightUnit").addEventListener("change", function () {
 
     document.getElementById("results").innerHTML = `
         <h3 class="text-xl font-semibold">TMR : ${bmr.toFixed(0)} calories/jour</h3>
-        <p class="mt-2">Apport calorique quotidien estimé (basé sur le niveau d'activité): <strong>${tdee.toFixed(0)} calories/jour</strong></p>
+        <p class="mt-2">Apport calorique quotidien estimé : <strong>${tdee.toFixed(0)} calories/jour</strong></p>
     `;
 }
 
