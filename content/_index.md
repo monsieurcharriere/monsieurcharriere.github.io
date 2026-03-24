@@ -44,6 +44,11 @@ links:
     title: Calculatrice de 1RM et % de 1RM ou RPM
     description: Trouvez votre 1RM et les % de votre 1RM ou RPM.
 
+  - href: https://monsieurcharriere.github.io/mifflin_calculator.html
+    icon: fas fa-calculator
+    title: Calculatrice de BMR et apport calorique
+    description: Utilisez cette calculatrice pour estimer votre taux de métbolisme au repos.
+
   - href: https://timer.crosshero.com/
     icon: fas fa-stopwatch
     title: Workout Timer

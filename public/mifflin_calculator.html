@@ -13,17 +13,22 @@
 <style>
 
 /* -----------------------------------------------------------
-   EXACT BACKGROUND FROM YOUR WORKING CALCULATORS
+   THE REAL BACKGROUND COLOR FROM YOUR WORKING CALCULATORS
 ----------------------------------------------------------- */
 
 :root {
+    --bg-color: #1a1a2e;       /* THIS is the correct color */
     --dot-color: rgba(255, 255, 255, 0.22);
 }
 
-body {
-    background-color: #1a1a1a !important;
+html, body {
+    background-color: var(--bg-color) !important;
     font-family: 'Inter', sans-serif;
 }
+
+/* -----------------------------------------------------------
+   PARTICLE BACKGROUND (EXACT MATCH)
+----------------------------------------------------------- */
 
 .bg-animation {
     position: fixed;
@@ -99,18 +104,33 @@ a.return-link {
     display: block;
     text-align: center;
     margin-top: 2rem;
-    color: #fff;
-    opacity: 0.8;
-    text-decoration: underline;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;        /* ← removes underline */
+    font-weight: 500;
+    transition: color 0.25s ease, text-shadow 0.25s ease;
 }
 
 a.return-link:hover {
-    opacity: 1;
+    color: #ffffff;
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.45);
 }
+.inline-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.inline-label select {
+    width: auto !important;
+    margin: 0 !important;
+    padding: 4px 6px;
+}
+
 
 </style>
 
-<title>Calculateur Mifflin–St Jeor</title>
+<title>Calculatrice de BMR Mifflin–St Jeor</title>
 </head>
 
 <body>
@@ -120,10 +140,10 @@ a.return-link:hover {
 <div class="container mx-auto px-4 py-12 max-w-md">
   <div class="wrapper">
 
-    <h1 class="text-2xl font-bold mb-2 text-white">Calculateur Mifflin–St Jeor</h1>
+    <h1 class="text-2xl font-bold mb-2 text-white">Calculatrice de BMR et d'apport calorique</h1>
 
     <p class="text-white" style="opacity:0.85; font-size:0.9rem; margin-top:-0.5rem; margin-bottom:1rem;">
-      Calcule votre métabolisme de base (BMR) et vos besoins caloriques quotidiens.
+      Cet outil vous permet d'estimer votre métabolisme de base (BMR) et vos besoins caloriques quotidiens basé sur votre niveau d'activité. Cette calculatrice utilise la formule de Mifflin–St Jeor, qui est largement reconnue pour sa précision. Veuillez entrer vos informations ci-dessous pour obtenir une estimation personnalisée.
     </p>
 
     <!-- SEX -->
@@ -134,28 +154,34 @@ a.return-link:hover {
     </select>
 
     <!-- WEIGHT -->
+  <div class="inline-label">
     <label class="text-white">Poids</label>
-    <input type="number" id="weightInput" placeholder="Entrer votre poids">
     <select id="weightUnit">
       <option value="kg">kg</option>
       <option value="lbs">lbs</option>
     </select>
+</div>
 
-    <!-- HEIGHT UNIT SELECTOR -->
-    <label class="text-white">Taille</label>
-    <select id="heightMode" onchange="toggleHeightMode()">
-      <option value="cm">Centimètres</option>
-      <option value="ftin">Pieds + pouces</option>
-    </select>
+<input type="number" id="weightInput" placeholder="Entrer votre poids">
+
 
     <!-- HEIGHT IN CM -->
-    <input type="number" id="heightCm" placeholder="Taille en centimètres">
+    <div class="inline-label">
+    <label class="text-white">Taille</label>
+    <select id="heightMode" onchange="toggleHeightMode()">
+      <option value="cm">cm</option>
+      <option value="ftin">pi + po</option>
+    </select>
+</div>
 
-    <!-- HEIGHT IN FEET + INCHES -->
-    <div id="heightFeetInches" style="display:none;">
-      <input type="number" id="heightFeet" placeholder="Pieds">
-      <input type="number" id="heightInches" placeholder="Pouces">
-    </div>
+<!-- HEIGHT IN CM -->
+<input type="number" id="heightCm" placeholder="Taille en centimètres">
+
+<!-- HEIGHT IN FEET + INCHES -->
+<div id="heightFeetInches" style="display:none;">
+  <input type="number" id="heightFeet" placeholder="Pieds">
+  <input type="number" id="heightInches" placeholder="Pouces">
+</div>
 
     <!-- AGE -->
     <label class="text-white">Âge</label>
@@ -170,7 +196,7 @@ a.return-link:hover {
       <option value="1.725">Très actif — 6 à 7 séances/semaine</option>
     </select>
 
-    <button onclick="calculate()">Calculer</button>
+    <button onclick="calculate()">Calculer BMR</button>
 
     <div id="results" class="mt-4 text-white"></div>
 
@@ -182,7 +208,7 @@ a.return-link:hover {
 <script>
 
 /* -----------------------------------------------------------
-   EXACT PARTICLE SYSTEM FROM YOUR WORKING PAGE
+   PARTICLE SYSTEM (EXACT MATCH)
 ----------------------------------------------------------- */
 
 const bg = document.getElementById("bgAnimation");
@@ -260,7 +286,7 @@ function calculate() {
 
     document.getElementById("results").innerHTML = `
         <h3 class="text-xl font-semibold">BMR : ${bmr.toFixed(0)} calories/jour</h3>
-        <p class="mt-2">Apport calorique quotidien estimé : <strong>${tdee.toFixed(0)} calories/jour</strong></p>
+        <p class="mt-2">Apport calorique quotidien estimé (basé sur le niveau d'activité): <strong>${tdee.toFixed(0)} calories/jour</strong></p>
     `;
 }
 
