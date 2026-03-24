@@ -46,8 +46,8 @@ links:
 
   - href: https://monsieurcharriere.github.io/mifflin_calculator.html
     icon: fas fa-calculator
-    title: Calculatrice de BMR et apport calorique
-    description: Utilisez cette calculatrice pour estimer votre taux de métbolisme au repos.
+    title: Calculatrice de TMR et apport calorique
+    description: Utilisez cette calculatrice pour estimer votre taux de métbolisme au repos et d'apport calorique.
 
   - href: https://timer.crosshero.com/
     icon: fas fa-stopwatch
