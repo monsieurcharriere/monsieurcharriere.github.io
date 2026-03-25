@@ -142,10 +142,10 @@ a.return-link:hover {
 <div class="container mx-auto px-4 py-12 max-w-md">
   <div class="wrapper">
 
-    <h1 class="text-2xl font-bold mb-2 text-white">Calculatrice de TMR et d'apport calorique</h1>
+    <h1 class="text-2xl font-bold mb-2 text-white">Calculatrice de TMB et d'apport calorique</h1>
 
     <p class="text-white" style="opacity:0.85; font-size:0.9rem; margin-top:-0.5rem; margin-bottom:1rem;">
-      Cet outil estime votre taux de métabolisme au repos (TMR) et vos besoins caloriques quotidiens selon la formule de Mifflin–St Jeor.
+      Cet outil estime votre taux de métabolisme de base (TMB) et vos besoins caloriques quotidiens selon la formule de Mifflin–St Jeor.
     </p>
 
     <!-- SEX -->
@@ -195,7 +195,7 @@ a.return-link:hover {
       <option value="1.725">Très actif — 6 à 7 séances/semaine</option>
     </select>
 
-    <button onclick="calculate()">Calculer TMR</button>
+    <button onclick="calculate()">Calculer TMB</button>
 
     <div id="results" class="mt-4 text-white"></div>
 
@@ -299,7 +299,7 @@ function calculate() {
     const tdee = bmr * activity;
 
     document.getElementById("results").innerHTML = `
-        <h3 class="text-xl font-semibold">TMR : ${bmr.toFixed(0)} calories/jour</h3>
+        <h3 class="text-xl font-semibold">TMB : ${bmr.toFixed(0)} calories/jour</h3>
         <p class="mt-2">Apport calorique quotidien estimé : <strong>${tdee.toFixed(0)} calories/jour</strong></p>
     `;
 }
