@@ -373,24 +373,30 @@ let running = false;
 let sessionStart = null;  // ms
 let soundOn = false;
 let lastCycle = null;
+let lastCeil = null;
 let audioCtx = null;
 
 const $ = id => document.getElementById(id);
 const pad = (n, l = 2) => String(n).padStart(l, "0");
 
-function beep() {
+function tone(freq, duration, volume) {
     if (!soundOn) return;
     try {
         audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
         const o = audioCtx.createOscillator();
         const g = audioCtx.createGain();
-        o.frequency.value = 880;
-        g.gain.setValueAtTime(0.25, audioCtx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+        const t0 = audioCtx.currentTime;
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(volume, t0);
+        g.gain.setValueAtTime(volume, t0 + duration * 0.8);
+        g.gain.exponentialRampToValueAtTime(0.001, t0 + duration);
         o.connect(g); g.connect(audioCtx.destination);
-        o.start(); o.stop(audioCtx.currentTime + 0.35);
+        o.start(t0); o.stop(t0 + duration);
     } catch (e) {}
 }
+
+const countdownBeep = () => tone(440, 0.15, 0.3);
+const startBeep = () => tone(1320, 0.9, 0.35);
 
 function setMode(m) {
     mode = m;
@@ -400,7 +406,7 @@ function setMode(m) {
     $("startBtn").disabled = m === "wall";
     $("resetBtn").disabled = m === "wall";
     if (m === "wall") { running = false; sessionStart = null; }
-    lastCycle = null;
+    lastCycle = null; lastCeil = null;
     updateStartBtn();
 }
 
@@ -414,24 +420,24 @@ $("modeSession").onclick = () => setMode("session");
 $("startBtn").onclick = () => {
     if (mode !== "session") return;
     if (running) { running = false; }
-    else { sessionStart = Date.now(); running = true; lastCycle = null; }
+    else { sessionStart = Date.now(); running = true; lastCycle = null; lastCeil = null; }
     updateStartBtn();
 };
 
 $("resetBtn").onclick = () => {
-    running = false; sessionStart = null; lastCycle = null;
+    running = false; sessionStart = null; lastCycle = null; lastCeil = null;
     updateStartBtn();
 };
 
 $("soundBtn").onclick = () => {
     soundOn = !soundOn;
     $("soundBtn").textContent = soundOn ? "Son activé" : "Son désactivé";
-    if (soundOn) beep();
+    if (soundOn) countdownBeep();
 };
 
 $("interval").onchange = () => {
     $("cycleLabel").textContent = "cycle de " + $("interval").value + " s";
-    lastCycle = null;
+    lastCycle = null; lastCeil = null;
 };
 
 function setVisible(on) {
@@ -488,8 +494,16 @@ function tick() {
     $("bar").style.width = ((1 - shown / interval) * 100) + "%";
 
     const cycle = Math.floor(t / interval);
-    if (lastCycle !== null && cycle !== lastCycle && (mode === "wall" || running)) beep();
+    const ceil = Math.ceil(remaining);
+    if (mode === "wall" || running) {
+        if (lastCycle !== null && cycle !== lastCycle) {
+            startBeep();
+        } else if (lastCeil !== null && ceil !== lastCeil && ceil <= 3 && ceil >= 1 && interval > 3) {
+            countdownBeep();
+        }
+    }
     lastCycle = cycle;
+    lastCeil = ceil;
 
     /* Elapsed: time of day in wall mode, session time otherwise */
     if (mode === "wall") {
