@@ -145,8 +145,15 @@ button:hover {
    SLIDESHOW
 ----------------------------------------------------------- */
 
+.page-content {
+    width: 100%;
+    min-width: 0;
+}
+
 .slideshow {
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     margin-top: 1rem;
 }
 
@@ -157,6 +164,8 @@ button:hover {
     scroll-behavior: smooth;
     gap: 1rem;
     scrollbar-width: none;
+    width: 100%;
+    max-width: 100%;
 }
 
 .slides::-webkit-scrollbar {
@@ -168,6 +177,8 @@ button:hover {
     scroll-snap-align: center;
     box-sizing: border-box;
     min-height: 340px;
+    min-width: 0;
+    overflow-wrap: anywhere;
     padding: 1.5rem;
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.08);
