@@ -385,7 +385,7 @@ const $ = id => document.getElementById(id);
 const pad = (n, l = 2) => String(n).padStart(l, "0");
 
 function tone(freq, duration, volume) {
-    if (!soundOn) return;
+    if (!soundOn || mode !== "session") return;
     try {
         audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
         const o = audioCtx.createOscillator();
@@ -418,6 +418,7 @@ function setMode(m) {
     $("modeLabel").textContent = m === "wall" ? "Horloge murale" : "Séance";
     $("startBtn").disabled = m === "wall";
     $("resetBtn").disabled = m === "wall";
+    updateSoundBtn();
     if (m === "wall") { running = false; sessionStart = null; preEnd = null; }
     lastCycle = null; lastCeil = null;
     updateStartBtn();
@@ -448,9 +449,15 @@ $("resetBtn").onclick = () => {
     updateStartBtn();
 };
 
+function updateSoundBtn() {
+    const btn = $("soundBtn");
+    btn.disabled = mode !== "session";
+    btn.textContent = (mode === "session" && soundOn) ? "Son activé" : "Son désactivé";
+}
+
 $("soundBtn").onclick = () => {
     soundOn = !soundOn;
-    $("soundBtn").textContent = soundOn ? "Son activé" : "Son désactivé";
+    updateSoundBtn();
     if (soundOn) countdownBeep();
 };
 
