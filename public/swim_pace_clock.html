@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+
+<style>
+
+/* -----------------------------------------------------------
+   SOFT, FEATHERED, SUBTLE BACKGROUND (BRIGHTER + START ON PAGE)
+----------------------------------------------------------- */
+
+:root {
+    --dot-color: rgba(255, 255, 255, 0.22); /* brighter but still soft */
+}
+
+.bg-animation {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    background: transparent;
+}
+
+.bg-animation span {
+    position: absolute;
+    display: block;
+    border-radius: 50%;
+    background: var(--dot-color);
+    filter: blur(8px);
+    opacity: 0.18; /* slightly brighter */
+    animation: floatUp linear infinite;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 0.18;
+    }
+    100% {
+        transform: translateY(-2000px) scale(0.7);
+        opacity: 0;
+    }
+}
+
+/* -----------------------------------------------------------
+   NAV + SPACING + INPUT + BUTTON FIXES
+----------------------------------------------------------- */
+
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    padding-bottom: 0.5rem;
+}
+
+nav a {
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    color: rgba(255, 255, 255, 0.85) !important;
+    text-decoration: none;
+    padding: 4px 6px;
+    transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+
+nav a strong {
+    color: #ffffff !important;
+}
+
+nav a:hover {
+    color: #ffffff !important;
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.45);
+}
+
+nav a.lang-link {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+nav .sep {
+    opacity: 0.6;
+    padding: 0 4px;
+}
+
+.site-header {
+    margin-bottom: 1.5rem;
+}
+
+input[type="number"],
+input[type="text"],
+input,
+textarea {
+    color: #000 !important;
+}
+
+input::placeholder {
+    color: #555 !important;
+}
+
+button {
+    background-color: #e5e7eb !important;
+    color: #000 !important;
+    border: 1px solid #000 !important;
+    padding: 8px 14px !important;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #d1d5db !important;
+}
+
+/* Full-width mobile layout */
+.wrapper {
+    width: 100%;
+}
+
+.wrapper label {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+.wrapper input[type="number"],
+.wrapper input[type="text"] {
+    width: 100% !important;
+    box-sizing: border-box;
+    margin-bottom: 1rem;
+}
+
+.wrapper button {
+    width: 100% !important;
+    box-sizing: border-box;
+    margin-top: 0.5rem;
+}
+
+/* -----------------------------------------------------------
+   PACE CLOCK
+----------------------------------------------------------- */
+
+.clock-wrap {
+    width: 100%;
+    max-width: 380px;
+    margin: 1.5rem auto 0;
+}
+
+.clock-wrap svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.45));
+}
+
+.clock-face { fill: #fdfdfd; }
+.clock-rim { fill: none; stroke: #111; stroke-width: 6; }
+.tick { stroke: #111; stroke-linecap: butt; }
+.num { fill: #111; font-family: "Inter", sans-serif; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
+.hand-min { stroke: #111; stroke-width: 7; stroke-linecap: round; }
+.hand-sec { stroke: #d62828; stroke-width: 4; stroke-linecap: round; }
+.hand-tail { stroke: #d62828; stroke-width: 6; stroke-linecap: round; }
+.hub { fill: #d62828; }
+
+.digital {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    font-variant-numeric: tabular-nums;
+}
+
+</style>
+
+<title>Horloge de nage</title>
+</head>
+
+<body>
+
+<div class="bg-animation" id="bgAnimation"></div>
+
+<div class="container mx-auto px-4 py-12 max-w-md">
+
+<div class="flex flex-col items-center mb-8">
+<header class="site-header">
+  <div class="wrapper">
+    <nav>
+      <a href="rpm_calculator.html">%RPM CALC</a>
+      <span class="sep">|</span>
+      <a href="airbike_workouts_fr.html">Airbike</a>
+    </nav>
+  </div>
+</header>
+
+<main class="page-content">
+  <div class="wrapper">
+
+    <h1>Horloge de nage</h1>
+
+    <div class="clock-wrap">
+      <svg viewBox="0 0 200 200" role="img" aria-label="Horloge de nage">
+        <circle class="clock-face" cx="100" cy="100" r="96"/>
+        <circle class="clock-rim" cx="100" cy="100" r="96"/>
+        <g id="ticks"></g>
+        <g id="nums"></g>
+        <line id="minHand" class="hand-min" x1="100" y1="100" x2="100" y2="48"/>
+        <g id="secHand">
+          <line class="hand-tail" x1="100" y1="100" x2="100" y2="114"/>
+          <line class="hand-sec" x1="100" y1="100" x2="100" y2="22"/>
+        </g>
+        <circle class="hub" cx="100" cy="100" r="5"/>
+      </svg>
+      <div class="digital" id="digital">00:00</div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrapper">
+    <p><a href="https://monsieurcharriere.github.io">Revenir au site</a></p>
+  </div>
+</footer>
+
+</div>
+</div>
+
+<script>
+const bg = document.getElementById("bgAnimation");
+
+function spawnParticle(startAnywhere = false) {
+    const particle = document.createElement("span");
+
+    /* Large particles: 40–120px */
+    const size = Math.random() * 80 + 40;
+    particle.style.width = size + "px";
+    particle.style.height = size + "px";
+
+    /* Random horizontal position */
+    particle.style.left = Math.random() * window.innerWidth + "px";
+
+    /* NEW LOGIC:
+       - If startAnywhere = true → place particle anywhere on screen
+       - Otherwise → spawn from bottom only
+    */
+    if (startAnywhere) {
+        const startY = Math.random() * window.innerHeight - 120;
+        particle.style.bottom = startY + "px";
+    } else {
+        particle.style.bottom = "-120px"; // bottom only
+    }
+
+    /* Very slow animation: 28–55 seconds */
+    particle.style.animationDuration = (Math.random() * 27 + 28) + "s";
+
+    /* Random delay */
+    particle.style.animationDelay = (Math.random() * 10) + "s";
+
+    bg.appendChild(particle);
+
+    /* Remove after animation completes */
+    setTimeout(() => particle.remove(), 60000);
+}
+
+/* INITIAL POPULATION: fill screen with particles */
+for (let i = 0; i < 20; i++) {
+    spawnParticle(true); // start anywhere
+}
+
+/* NEW PARTICLES: only from bottom */
+setInterval(() => spawnParticle(false), 2000);
+
+
+
+/* -----------------------------------------------------------
+   PACE CLOCK LOGIC (always running, continuous sweep)
+----------------------------------------------------------- */
+
+const SVGNS = "http://www.w3.org/2000/svg";
+const ticks = document.getElementById("ticks");
+const nums = document.getElementById("nums");
+
+for (let i = 0; i < 60; i++) {
+    const major = i % 5 === 0;
+    const angle = (i * 6 - 90) * Math.PI / 180;
+    const r1 = major ? 80 : 86;
+    const r2 = 91;
+    const line = document.createElementNS(SVGNS, "line");
+    line.setAttribute("class", "tick");
+    line.setAttribute("stroke-width", major ? 3 : 1.2);
+    line.setAttribute("x1", 100 + r1 * Math.cos(angle));
+    line.setAttribute("y1", 100 + r1 * Math.sin(angle));
+    line.setAttribute("x2", 100 + r2 * Math.cos(angle));
+    line.setAttribute("y2", 100 + r2 * Math.sin(angle));
+    ticks.appendChild(line);
+
+    if (major) {
+        const text = document.createElementNS(SVGNS, "text");
+        text.setAttribute("class", "num");
+        text.setAttribute("font-size", 15);
+        text.setAttribute("x", 100 + 66 * Math.cos(angle));
+        text.setAttribute("y", 100 + 66 * Math.sin(angle));
+        text.textContent = i === 0 ? "60" : i;
+        nums.appendChild(text);
+    }
+}
+
+const secHand = document.getElementById("secHand");
+const minHand = document.getElementById("minHand");
+const digital = document.getElementById("digital");
+
+function tick() {
+    const now = new Date();
+    const sec = now.getSeconds() + now.getMilliseconds() / 1000;
+    const min = now.getMinutes() + sec / 60;
+
+    secHand.setAttribute("transform", `rotate(${sec * 6} 100 100)`);
+    minHand.setAttribute("transform", `rotate(${min * 6} 100 100)`);
+
+    const m = String(now.getMinutes()).padStart(2, "0");
+    const s = String(now.getSeconds()).padStart(2, "0");
+    digital.textContent = `${m}:${s}`;
+
+    requestAnimationFrame(tick);
+}
+
+tick();
+
+</script>
+
+</body>
+</html>
