@@ -50,7 +50,7 @@ links:
     description: Utilisez cette calculatrice pour estimer votre taux de métbolisme de base et d'apport calorique.
 
   - href: https://monsieurcharriere.github.io/airbike_workouts_fr.html
-    icon: fas fa-bolt
+    icon: fas fa-bicycle
     title: Entraînements Airbike
     description: Des séances d'intervalles et de conditionnement à l'Airbike.
 
