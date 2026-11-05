@@ -306,7 +306,7 @@
       <g id="nums"></g>
       <g id="hands"></g>
       <circle cx="200" cy="200" r="19" fill="#fff"/>
-      <text id="preText" x="200" y="300" fill="#ffd60a" font-size="80" font-weight="700" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Inter, sans-serif"></text>
+      <text id="preText" x="200" y="300" fill="#5ac8fa" font-size="80" font-weight="700" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Inter, sans-serif"></text>
     </svg>
 
     <div class="sendoff">
@@ -419,6 +419,7 @@ function setMode(m) {
     $("startBtn").disabled = m === "wall";
     $("resetBtn").disabled = m === "wall";
     updateSoundBtn();
+    $("preBtn").disabled = m !== "session";
     if (m === "wall") { running = false; sessionStart = null; preEnd = null; }
     lastCycle = null; lastCeil = null;
     updateStartBtn();
