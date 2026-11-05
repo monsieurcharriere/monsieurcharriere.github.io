@@ -283,9 +283,10 @@
       <button type="button" class="btn" id="resetBtn">&#8635; Réinitialiser</button>
     </div>
     <div class="btn-row">
-      <button type="button" class="btn small" id="soundBtn">Son désactivé</button>
+      <button type="button" class="btn small" id="soundBtn">Son activé</button>
       <button type="button" class="btn small" id="visibleBtn">Mode visible</button>
     </div>
+    <button type="button" class="btn small" id="preBtn">Compte à rebours de 10 s : désactivé</button>
 
     <div class="stats">
       <div><div class="k">Temps écoulé</div><div class="v" id="elapsed">00:00:00</div></div>
@@ -305,6 +306,7 @@
       <g id="nums"></g>
       <g id="hands"></g>
       <circle cx="200" cy="200" r="19" fill="#fff"/>
+      <text id="preText" x="200" y="300" fill="#ffd60a" font-size="80" font-weight="700" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Inter, sans-serif"></text>
     </svg>
 
     <div class="sendoff">
@@ -371,7 +373,10 @@ HANDS.forEach(h => {
 let mode = "wall";        // "wall" | "session"
 let running = false;
 let sessionStart = null;  // ms
-let soundOn = false;
+let soundOn = true;
+let preEnd = null;        // ms, end of the pre-workout countdown
+let preCeil = null;
+let preCountdownOn = false;
 let lastCycle = null;
 let lastCeil = null;
 let audioCtx = null;
@@ -396,7 +401,15 @@ function tone(freq, duration, volume) {
 }
 
 const countdownBeep = () => tone(440, 0.15, 0.3);
-const startBeep = () => tone(1320, 0.9, 0.35);
+const startBeep = () => tone(880, 0.9, 0.35);
+
+function unlockAudio() {
+    try {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === "suspended") audioCtx.resume();
+    } catch (e) {}
+}
+["pointerdown", "keydown"].forEach(ev => document.addEventListener(ev, unlockAudio));
 
 function setMode(m) {
     mode = m;
@@ -405,13 +418,13 @@ function setMode(m) {
     $("modeLabel").textContent = m === "wall" ? "Horloge murale" : "Séance";
     $("startBtn").disabled = m === "wall";
     $("resetBtn").disabled = m === "wall";
-    if (m === "wall") { running = false; sessionStart = null; }
+    if (m === "wall") { running = false; sessionStart = null; preEnd = null; }
     lastCycle = null; lastCeil = null;
     updateStartBtn();
 }
 
 function updateStartBtn() {
-    $("startBtn").innerHTML = running ? "&#10074;&#10074; Arrêter" : "&#9654; Démarrer";
+    $("startBtn").innerHTML = (running || preEnd) ? "&#10074;&#10074; Arrêter" : "&#9654; Démarrer";
 }
 
 $("modeWall").onclick = () => setMode("wall");
@@ -419,13 +432,19 @@ $("modeSession").onclick = () => setMode("session");
 
 $("startBtn").onclick = () => {
     if (mode !== "session") return;
-    if (running) { running = false; }
+    if (running || preEnd) { running = false; preEnd = null; }
+    else if (preCountdownOn) { preEnd = Date.now() + 10000; preCeil = null; }
     else { sessionStart = Date.now(); running = true; lastCycle = null; lastCeil = null; }
     updateStartBtn();
 };
 
+$("preBtn").onclick = () => {
+    preCountdownOn = !preCountdownOn;
+    $("preBtn").textContent = "Compte à rebours de 10 s : " + (preCountdownOn ? "activé" : "désactivé");
+};
+
 $("resetBtn").onclick = () => {
-    running = false; sessionStart = null; lastCycle = null; lastCeil = null;
+    running = false; sessionStart = null; preEnd = null; lastCycle = null; lastCeil = null;
     updateStartBtn();
 };
 
@@ -466,6 +485,28 @@ function tick() {
     $("tod").textContent = tod;
     $("todOverlay").textContent = tod;
 
+    /* Pre-workout countdown */
+    let preText = "";
+    if (preEnd) {
+        const rem = (preEnd - Date.now()) / 1000;
+        if (rem <= 0) {
+            preEnd = null;
+            sessionStart = Date.now();
+            running = true;
+            lastCycle = null; lastCeil = null;
+            startBeep();
+            updateStartBtn();
+        } else {
+            const c = Math.ceil(rem);
+            if (c !== preCeil) {
+                if (c <= 3) countdownBeep();
+                preCeil = c;
+            }
+            preText = String(c);
+        }
+    }
+    $("preText").textContent = preText;
+
     /* Reference time for hands and send-off */
     let t;
     let elapsedSec = 0;
@@ -486,12 +527,12 @@ function tick() {
     /* Send-off countdown */
     const interval = parseInt($("interval").value, 10);
     const remaining = interval - (t % interval);
-    const shown = (mode === "session" && !running) ? interval : remaining;
+    const shown = (mode === "session" && !running) ? (preEnd ? Math.max(0, (preEnd - Date.now()) / 1000) : interval) : remaining;
     const tenths = Math.floor(shown * 10);
     const txt = `${pad(Math.floor(tenths / 600))}:${pad(Math.floor(tenths / 10) % 60)}.${tenths % 10}`;
     $("nextSend").textContent = txt;
     $("nextSend2").textContent = txt;
-    $("bar").style.width = ((1 - shown / interval) * 100) + "%";
+    $("bar").style.width = (preEnd ? 0 : (1 - shown / interval) * 100) + "%";
 
     const cycle = Math.floor(t / interval);
     const ceil = Math.ceil(remaining);
