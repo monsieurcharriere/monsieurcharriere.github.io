@@ -49,6 +49,11 @@ links:
     title: Calculatrice de TMR et apport calorique
     description: Utilisez cette calculatrice pour estimer votre taux de métbolisme de base et d'apport calorique.
 
+  - href: https://monsieurcharriere.github.io/airbike_workouts_fr.html
+    icon: fas fa-bolt
+    title: Entraînements Airbike
+    description: Des séances d'intervalles et de conditionnement à l'Airbike.
+
   - href: https://timer.crosshero.com/
     icon: fas fa-stopwatch
     title: Workout Timer
