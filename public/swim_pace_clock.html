@@ -3,340 +3,507 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="css/style.css">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+  <title>Horloge de nage</title>
   <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <style>
+    * { box-sizing: border-box; }
 
-<style>
-
-/* -----------------------------------------------------------
-   SOFT, FEATHERED, SUBTLE BACKGROUND (BRIGHTER + START ON PAGE)
------------------------------------------------------------ */
-
-:root {
-    --dot-color: rgba(255, 255, 255, 0.22); /* brighter but still soft */
-}
-
-.bg-animation {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    overflow: hidden;
-    background: transparent;
-}
-
-.bg-animation span {
-    position: absolute;
-    display: block;
-    border-radius: 50%;
-    background: var(--dot-color);
-    filter: blur(8px);
-    opacity: 0.18; /* slightly brighter */
-    animation: floatUp linear infinite;
-}
-
-@keyframes floatUp {
-    0% {
-        transform: translateY(0) scale(1);
-        opacity: 0.18;
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: #0a0f1a;
+      color: #fff;
+      font-family: "Segoe UI", Inter, system-ui, -apple-system, sans-serif;
     }
-    100% {
-        transform: translateY(-2000px) scale(0.7);
-        opacity: 0;
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
     }
-}
 
-/* -----------------------------------------------------------
-   NAV + SPACING + INPUT + BUTTON FIXES
------------------------------------------------------------ */
+    .app {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      width: 100%;
+      max-width: 1700px;
+      height: calc(100vh - 32px);
+      min-height: 560px;
+      background: #06182b;
+      border-radius: 32px;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+    }
 
-nav {
-    display: flex;
-    justify-content: center;
-    gap: 0.75rem;
-    flex-wrap: nowrap;
-    white-space: nowrap;
-    padding-bottom: 0.5rem;
-}
+    /* ---------- Left panel ---------- */
+    .panel {
+      background: #0b2038;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 28px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      overflow-y: auto;
+    }
 
-nav a {
-    font-size: 1.05rem;
-    font-weight: 600;
-    letter-spacing: 0.4px;
-    color: rgba(255, 255, 255, 0.85) !important;
-    text-decoration: none;
-    padding: 4px 6px;
-    transition: color 0.25s ease, text-shadow 0.25s ease;
-}
+    .eyebrow {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      color: #5db4ff;
+      text-transform: uppercase;
+    }
 
-nav a strong {
-    color: #ffffff !important;
-}
+    .panel h1 {
+      margin: 4px 0 0;
+      font-size: 1.9rem;
+      line-height: 1.1;
+    }
 
-nav a:hover {
-    color: #ffffff !important;
-    text-shadow: 0 0 6px rgba(255, 255, 255, 0.45);
-}
+    .tod {
+      font-size: clamp(2.6rem, 5.2vw, 4.4rem);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 1px;
+      line-height: 1;
+      padding: 18px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+    }
 
-nav a.lang-link {
-    font-size: 0.8rem;
-    opacity: 0.8;
-}
+    .tod small {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      color: #9fb3c8;
+      text-transform: uppercase;
+    }
 
-nav .sep {
-    opacity: 0.6;
-    padding: 0 4px;
-}
+    .label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #9fb3c8;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
 
-.site-header {
-    margin-bottom: 1.5rem;
-}
+    .legend {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
 
-input[type="number"],
-input[type="text"],
-input,
-textarea {
-    color: #000 !important;
-}
+    .legend span { display: flex; align-items: center; gap: 8px; }
+    .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
 
-input::placeholder {
-    color: #555 !important;
-}
+    .toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #16304d;
+      border-radius: 14px;
+      padding: 5px;
+    }
 
-button {
-    background-color: #e5e7eb !important;
-    color: #000 !important;
-    border: 1px solid #000 !important;
-    padding: 8px 14px !important;
-    border-radius: 4px;
-    cursor: pointer;
-}
+    .toggle button {
+      border: 0;
+      background: transparent;
+      color: #b6c4d4;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
 
-button:hover {
-    background-color: #d1d5db !important;
-}
+    .toggle button.active { background: #fff; color: #0b2038; }
 
-/* Full-width mobile layout */
-.wrapper {
-    width: 100%;
-}
+    select {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: #16304d;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+    }
 
-.wrapper label {
-    display: block;
-    width: 100%;
-    margin-bottom: 0.5rem;
-}
+    .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-.wrapper input[type="number"],
-.wrapper input[type="text"] {
-    width: 100% !important;
-    box-sizing: border-box;
-    margin-bottom: 1rem;
-}
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: #12293f;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
 
-.wrapper button {
-    width: 100% !important;
-    box-sizing: border-box;
-    margin-top: 0.5rem;
-}
+    .btn.primary { background: #0a84ff; border-color: #0a84ff; }
+    .btn.small { font-size: 0.85rem; padding: 12px; color: #d0dbe6; }
+    .btn:disabled { opacity: 0.4; cursor: default; }
 
-/* -----------------------------------------------------------
-   PACE CLOCK
------------------------------------------------------------ */
+    .stats {
+      margin-top: auto;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
 
-.clock-wrap {
-    width: 100%;
-    max-width: 380px;
-    margin: 1.5rem auto 0;
-}
+    .stats .k { font-size: 0.75rem; color: #9fb3c8; margin-bottom: 4px; }
+    .stats .v { font-size: 1.35rem; font-weight: 700; font-variant-numeric: tabular-nums; }
 
-.clock-wrap svg {
-    width: 100%;
-    height: auto;
-    display: block;
-    filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.45));
-}
+    .home { font-size: 0.8rem; text-align: center; }
+    .home a { color: #9fb3c8; text-decoration: none; }
+    .home a:hover { color: #fff; }
 
-.clock-face { fill: #fdfdfd; }
-.clock-rim { fill: none; stroke: #111; stroke-width: 6; }
-.tick { stroke: #111; stroke-linecap: butt; }
-.num { fill: #111; font-family: "Inter", sans-serif; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
-.hand-min { stroke: #111; stroke-width: 7; stroke-linecap: round; }
-.hand-sec { stroke: #d62828; stroke-width: 4; stroke-linecap: round; }
-.hand-tail { stroke: #d62828; stroke-width: 6; stroke-linecap: round; }
-.hub { fill: #d62828; }
+    /* ---------- Clock side ---------- */
+    .stage {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: radial-gradient(circle at 50% 50%, #0a2036 0%, #06182b 70%);
+    }
 
-.digital {
-    text-align: center;
-    margin-top: 1rem;
-    font-size: 1.6rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-    font-variant-numeric: tabular-nums;
-}
+    .stage svg {
+      width: min(100%, calc(100vh - 100px));
+      height: auto;
+      max-height: 100%;
+      filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.6));
+    }
 
-</style>
+    .sendoff {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      width: 250px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(11, 32, 56, 0.8);
+    }
 
-<title>Horloge de nage</title>
+    .sendoff .row { display: flex; justify-content: space-between; align-items: center; }
+    .sendoff .t { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: #9fb3c8; }
+    .sendoff .n { font-size: 1.1rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .bar { height: 6px; border-radius: 3px; background: #1d3855; margin: 10px 0 6px; overflow: hidden; }
+    .bar i { display: block; height: 100%; width: 0; background: #0a84ff; }
+    .sendoff .sub { display: flex; justify-content: space-between; font-size: 0.65rem; color: #9fb3c8; }
+
+    /* Visible mode: hide the panel, clock fills the screen */
+    body.visible { padding: 0; }
+    body.visible .app { grid-template-columns: 1fr; height: 100vh; border-radius: 0; max-width: none; }
+    body.visible .panel { display: none; }
+    body.visible .stage { cursor: pointer; }
+    body.visible .stage svg { width: min(100%, 100vh); }
+
+    .tod-overlay {
+      display: none;
+      position: absolute;
+      top: 24px;
+      left: 28px;
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    body.visible .tod-overlay { display: block; }
+
+    @media (max-width: 900px) {
+      body { padding: 0; align-items: flex-start; }
+      .app { grid-template-columns: 1fr; height: auto; border-radius: 0; }
+      .stage { order: -1; padding: 12px; flex-direction: column; }
+      .stage svg { width: 100%; }
+      .sendoff { position: static; margin-top: 12px; width: 100%; }
+      .panel { border-right: 0; }
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="bg-animation" id="bgAnimation"></div>
+<div class="app">
 
-<div class="container mx-auto px-4 py-12 max-w-md">
-
-<div class="flex flex-col items-center mb-8">
-<header class="site-header">
-  <div class="wrapper">
-    <nav>
-      <a href="rpm_calculator.html">%RPM CALC</a>
-      <span class="sep">|</span>
-      <a href="airbike_workouts_fr.html">Airbike</a>
-    </nav>
-  </div>
-</header>
-
-<main class="page-content">
-  <div class="wrapper">
-
-    <h1>Horloge de nage</h1>
-
-    <div class="clock-wrap">
-      <svg viewBox="0 0 200 200" role="img" aria-label="Horloge de nage">
-        <circle class="clock-face" cx="100" cy="100" r="96"/>
-        <circle class="clock-rim" cx="100" cy="100" r="96"/>
-        <g id="ticks"></g>
-        <g id="nums"></g>
-        <line id="minHand" class="hand-min" x1="100" y1="100" x2="100" y2="48"/>
-        <g id="secHand">
-          <line class="hand-tail" x1="100" y1="100" x2="100" y2="114"/>
-          <line class="hand-sec" x1="100" y1="100" x2="100" y2="22"/>
-        </g>
-        <circle class="hub" cx="100" cy="100" r="5"/>
-      </svg>
-      <div class="digital" id="digital">00:00</div>
+  <aside class="panel">
+    <div>
+      <div class="eyebrow">Chronométrage en piscine</div>
+      <h1>Horloge de nage</h1>
     </div>
 
-  </div>
-</main>
+    <div class="tod" aria-live="off">
+      <small>Heure</small>
+      <span id="tod">--:--:--</span>
+    </div>
 
-<footer class="site-footer">
-  <div class="wrapper">
-    <p><a href="https://monsieurcharriere.github.io">Revenir au site</a></p>
-  </div>
-</footer>
+    <div>
+      <div class="label">Départ des aiguilles</div>
+      <div class="legend">
+        <span><i class="dot" style="background:#ffffff"></i>00 secondes</span>
+        <span><i class="dot" style="background:#2ecc5b"></i>15 secondes</span>
+        <span><i class="dot" style="background:#ffd60a"></i>30 secondes</span>
+        <span><i class="dot" style="background:#ff453a"></i>45 secondes</span>
+      </div>
+    </div>
 
-</div>
+    <div class="toggle" role="tablist">
+      <button type="button" id="modeWall" class="active">Horloge murale</button>
+      <button type="button" id="modeSession">Séance</button>
+    </div>
+
+    <div>
+      <div class="label" style="text-transform:none;font-size:0.9rem;color:#fff;letter-spacing:0">Intervalle de départ</div>
+      <select id="interval">
+        <option value="15">15 secondes</option>
+        <option value="20">20 secondes</option>
+        <option value="30">30 secondes</option>
+        <option value="45">45 secondes</option>
+        <option value="60" selected>1 minute</option>
+        <option value="90">1 min 30</option>
+        <option value="120">2 minutes</option>
+      </select>
+    </div>
+
+    <div class="btn-row">
+      <button type="button" class="btn primary" id="startBtn">&#9654; Démarrer</button>
+      <button type="button" class="btn" id="resetBtn">&#8635; Réinitialiser</button>
+    </div>
+    <div class="btn-row">
+      <button type="button" class="btn small" id="soundBtn">Son désactivé</button>
+      <button type="button" class="btn small" id="visibleBtn">Mode visible</button>
+    </div>
+
+    <div class="stats">
+      <div><div class="k">Temps écoulé</div><div class="v" id="elapsed">00:00:00</div></div>
+      <div><div class="k">Prochain départ</div><div class="v" id="nextSend">00:00.0</div></div>
+    </div>
+
+    <div class="home"><a href="https://monsieurcharriere.github.io">Revenir au site</a></div>
+  </aside>
+
+  <main class="stage" id="stage">
+    <div class="tod-overlay" id="todOverlay"></div>
+
+    <svg viewBox="0 0 400 400" role="img" aria-label="Horloge de nage à quatre aiguilles">
+      <circle cx="200" cy="200" r="196" fill="#151515"/>
+      <circle cx="200" cy="200" r="178" fill="#000"/>
+      <g id="ticks"></g>
+      <g id="nums"></g>
+      <g id="hands"></g>
+      <circle cx="200" cy="200" r="19" fill="#fff"/>
+    </svg>
+
+    <div class="sendoff">
+      <div class="row"><span class="t">PROCHAIN DÉPART</span><span class="n" id="nextSend2">00:00.0</span></div>
+      <div class="bar"><i id="bar"></i></div>
+      <div class="sub"><span id="modeLabel">Horloge murale</span><span id="cycleLabel">cycle de 60 s</span></div>
+    </div>
+  </main>
+
 </div>
 
 <script>
-const bg = document.getElementById("bgAnimation");
-
-function spawnParticle(startAnywhere = false) {
-    const particle = document.createElement("span");
-
-    /* Large particles: 40–120px */
-    const size = Math.random() * 80 + 40;
-    particle.style.width = size + "px";
-    particle.style.height = size + "px";
-
-    /* Random horizontal position */
-    particle.style.left = Math.random() * window.innerWidth + "px";
-
-    /* NEW LOGIC:
-       - If startAnywhere = true → place particle anywhere on screen
-       - Otherwise → spawn from bottom only
-    */
-    if (startAnywhere) {
-        const startY = Math.random() * window.innerHeight - 120;
-        particle.style.bottom = startY + "px";
-    } else {
-        particle.style.bottom = "-120px"; // bottom only
-    }
-
-    /* Very slow animation: 28–55 seconds */
-    particle.style.animationDuration = (Math.random() * 27 + 28) + "s";
-
-    /* Random delay */
-    particle.style.animationDelay = (Math.random() * 10) + "s";
-
-    bg.appendChild(particle);
-
-    /* Remove after animation completes */
-    setTimeout(() => particle.remove(), 60000);
-}
-
-/* INITIAL POPULATION: fill screen with particles */
-for (let i = 0; i < 20; i++) {
-    spawnParticle(true); // start anywhere
-}
-
-/* NEW PARTICLES: only from bottom */
-setInterval(() => spawnParticle(false), 2000);
-
-
-
-/* -----------------------------------------------------------
-   PACE CLOCK LOGIC (always running, continuous sweep)
------------------------------------------------------------ */
-
 const SVGNS = "http://www.w3.org/2000/svg";
+const C = 200;
+
+function el(name, attrs, parent) {
+    const e = document.createElementNS(SVGNS, name);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+}
+
+/* Face: ticks and numbers */
 const ticks = document.getElementById("ticks");
 const nums = document.getElementById("nums");
-
 for (let i = 0; i < 60; i++) {
     const major = i % 5 === 0;
-    const angle = (i * 6 - 90) * Math.PI / 180;
-    const r1 = major ? 80 : 86;
-    const r2 = 91;
-    const line = document.createElementNS(SVGNS, "line");
-    line.setAttribute("class", "tick");
-    line.setAttribute("stroke-width", major ? 3 : 1.2);
-    line.setAttribute("x1", 100 + r1 * Math.cos(angle));
-    line.setAttribute("y1", 100 + r1 * Math.sin(angle));
-    line.setAttribute("x2", 100 + r2 * Math.cos(angle));
-    line.setAttribute("y2", 100 + r2 * Math.sin(angle));
-    ticks.appendChild(line);
-
+    const a = (i * 6 - 90) * Math.PI / 180;
+    const r1 = major ? 140 : 156;
+    const r2 = 170;
+    el("line", {
+        x1: C + r1 * Math.cos(a), y1: C + r1 * Math.sin(a),
+        x2: C + r2 * Math.cos(a), y2: C + r2 * Math.sin(a),
+        stroke: major ? "#fff" : "#8a8a8a",
+        "stroke-width": major ? 3 : 1.2
+    }, ticks);
     if (major) {
-        const text = document.createElementNS(SVGNS, "text");
-        text.setAttribute("class", "num");
-        text.setAttribute("font-size", 15);
-        text.setAttribute("x", 100 + 66 * Math.cos(angle));
-        text.setAttribute("y", 100 + 66 * Math.sin(angle));
-        text.textContent = i === 0 ? "60" : i;
-        nums.appendChild(text);
+        const t = el("text", {
+            x: C + 112 * Math.cos(a), y: C + 112 * Math.sin(a),
+            fill: "#fff", "font-size": 28, "font-weight": 700,
+            "text-anchor": "middle", "dominant-baseline": "central",
+            "font-family": "Segoe UI, Inter, sans-serif"
+        }, nums);
+        t.textContent = i === 0 ? "60" : i;
     }
 }
 
-const secHand = document.getElementById("secHand");
-const minHand = document.getElementById("minHand");
-const digital = document.getElementById("digital");
+/* Four tapered hands, starting at 0 / 15 / 30 / 45 seconds */
+const HANDS = [
+    { color: "#f5f5f7", offset: 0 },
+    { color: "#2ecc5b", offset: 15 },
+    { color: "#ffd60a", offset: 30 },
+    { color: "#ff453a", offset: 45 }
+];
+const handsG = document.getElementById("hands");
+HANDS.forEach(h => {
+    h.node = el("polygon", {
+        points: `${C - 7},${C + 4} ${C + 7},${C + 4} ${C + 1.5},${C - 165} ${C - 1.5},${C - 165}`,
+        fill: h.color
+    }, handsG);
+});
+
+/* State */
+let mode = "wall";        // "wall" | "session"
+let running = false;
+let sessionStart = null;  // ms
+let soundOn = false;
+let lastCycle = null;
+let audioCtx = null;
+
+const $ = id => document.getElementById(id);
+const pad = (n, l = 2) => String(n).padStart(l, "0");
+
+function beep() {
+    if (!soundOn) return;
+    try {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.frequency.value = 880;
+        g.gain.setValueAtTime(0.25, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + 0.35);
+    } catch (e) {}
+}
+
+function setMode(m) {
+    mode = m;
+    $("modeWall").classList.toggle("active", m === "wall");
+    $("modeSession").classList.toggle("active", m === "session");
+    $("modeLabel").textContent = m === "wall" ? "Horloge murale" : "Séance";
+    $("startBtn").disabled = m === "wall";
+    $("resetBtn").disabled = m === "wall";
+    if (m === "wall") { running = false; sessionStart = null; }
+    lastCycle = null;
+    updateStartBtn();
+}
+
+function updateStartBtn() {
+    $("startBtn").innerHTML = running ? "&#10074;&#10074; Arrêter" : "&#9654; Démarrer";
+}
+
+$("modeWall").onclick = () => setMode("wall");
+$("modeSession").onclick = () => setMode("session");
+
+$("startBtn").onclick = () => {
+    if (mode !== "session") return;
+    if (running) { running = false; }
+    else { sessionStart = Date.now(); running = true; lastCycle = null; }
+    updateStartBtn();
+};
+
+$("resetBtn").onclick = () => {
+    running = false; sessionStart = null; lastCycle = null;
+    updateStartBtn();
+};
+
+$("soundBtn").onclick = () => {
+    soundOn = !soundOn;
+    $("soundBtn").textContent = soundOn ? "Son activé" : "Son désactivé";
+    if (soundOn) beep();
+};
+
+$("interval").onchange = () => {
+    $("cycleLabel").textContent = "cycle de " + $("interval").value + " s";
+    lastCycle = null;
+};
+
+function setVisible(on) {
+    document.body.classList.toggle("visible", on);
+    if (on && document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+    } else if (!on && document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+    }
+}
+
+$("visibleBtn").onclick = () => setVisible(true);
+$("stage").addEventListener("click", () => {
+    if (document.body.classList.contains("visible")) setVisible(false);
+});
+document.addEventListener("fullscreenchange", () => {
+    if (!document.fullscreenElement) document.body.classList.remove("visible");
+});
 
 function tick() {
     const now = new Date();
-    const sec = now.getSeconds() + now.getMilliseconds() / 1000;
-    const min = now.getMinutes() + sec / 60;
+    const wallSec = now.getSeconds() + now.getMilliseconds() / 1000;
 
-    secHand.setAttribute("transform", `rotate(${sec * 6} 100 100)`);
-    minHand.setAttribute("transform", `rotate(${min * 6} 100 100)`);
+    /* Time of day (large, left panel) */
+    const tod = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    $("tod").textContent = tod;
+    $("todOverlay").textContent = tod;
 
-    const m = String(now.getMinutes()).padStart(2, "0");
-    const s = String(now.getSeconds()).padStart(2, "0");
-    digital.textContent = `${m}:${s}`;
+    /* Reference time for hands and send-off */
+    let t;
+    let elapsedSec = 0;
+    if (mode === "wall") {
+        t = now.getMinutes() * 60 + wallSec;
+    } else if (running && sessionStart) {
+        elapsedSec = (Date.now() - sessionStart) / 1000;
+        t = elapsedSec;
+    } else {
+        t = 0;
+    }
+
+    HANDS.forEach(h => {
+        const deg = ((t + h.offset) % 60) * 6;
+        h.node.setAttribute("transform", `rotate(${deg} ${C} ${C})`);
+    });
+
+    /* Send-off countdown */
+    const interval = parseInt($("interval").value, 10);
+    const remaining = interval - (t % interval);
+    const shown = (mode === "session" && !running) ? interval : remaining;
+    const tenths = Math.floor(shown * 10);
+    const txt = `${pad(Math.floor(tenths / 600))}:${pad(Math.floor(tenths / 10) % 60)}.${tenths % 10}`;
+    $("nextSend").textContent = txt;
+    $("nextSend2").textContent = txt;
+    $("bar").style.width = ((1 - shown / interval) * 100) + "%";
+
+    const cycle = Math.floor(t / interval);
+    if (lastCycle !== null && cycle !== lastCycle && (mode === "wall" || running)) beep();
+    lastCycle = cycle;
+
+    /* Elapsed: time of day in wall mode, session time otherwise */
+    if (mode === "wall") {
+        $("elapsed").textContent = tod;
+    } else {
+        const e = Math.floor(elapsedSec);
+        $("elapsed").textContent = `${pad(Math.floor(e / 3600))}:${pad(Math.floor(e / 60) % 60)}:${pad(e % 60)}`;
+    }
 
     requestAnimationFrame(tick);
 }
 
+setMode("wall");
 tick();
-
 </script>
 
 </body>
