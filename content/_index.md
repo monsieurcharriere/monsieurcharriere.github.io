@@ -54,6 +54,11 @@ links:
     title: Calculatrice de TMR et apport calorique
     description: Utilisez cette calculatrice pour estimer votre taux de métbolisme de base et d'apport calorique.
 
+  - href: https://monsieurcharriere.github.io/swim_pace_clock.html
+    icon: fas fa-stopwatch
+    title: Chronomètre de pacing
+    description: Horloge à quatre aiguilles pour le rythme et les départs en intervalles.
+
   - href: https://timer.crosshero.com/
     icon: fas fa-stopwatch
     title: Workout Timer
