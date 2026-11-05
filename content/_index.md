@@ -34,6 +34,11 @@ links:
     title: Série de gainage
     description: Amorce et 2 niveaux de gainage (core - bracing)
 
+  - href: https://monsieurcharriere.github.io/airbike_workouts_fr.html
+    icon: fas fa-bicycle
+    title: Entraînements Airbike
+    description: Des séances d'intervalles et de conditionnement à l'Airbike.
+
   - href: https://www.barbellcalculator.com/
     icon: fas fa-calculator
     title: Calculatrice de Barbell
@@ -48,11 +53,6 @@ links:
     icon: fas fa-calculator
     title: Calculatrice de TMR et apport calorique
     description: Utilisez cette calculatrice pour estimer votre taux de métbolisme de base et d'apport calorique.
-
-  - href: https://monsieurcharriere.github.io/airbike_workouts_fr.html
-    icon: fas fa-bicycle
-    title: Entraînements Airbike
-    description: Des séances d'intervalles et de conditionnement à l'Airbike.
 
   - href: https://timer.crosshero.com/
     icon: fas fa-stopwatch
