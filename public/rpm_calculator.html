@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -160,7 +160,7 @@ button:hover {
       <span class="sep">|</span>
       <a href="1rm_percentages.html">% 1RM</a>
       <span class="sep">|</span>
-      <a href="1rm_projection_calc.html">1RM estimé</a>
+      <a href="1rm_projection_calc.html" data-i18n="nav1rm">1RM estimé</a>
     </nav>
   </div>
 </header>
@@ -168,11 +168,11 @@ button:hover {
 <main class="page-content">
   <div class="wrapper">
 
-    <h1>Calculatrice de RPM</h1>
+    <h1><span data-i18n="title">Calculatrice de RPM</span> <a href="#" id="langToggle" class="lang-link" style="font-size:0.8rem; font-weight:400; opacity:0.8;">EN</a></h1>
 
-    <input type="number" id="rpmInput" placeholder="Entrer RPM moyen">
+    <input type="number" id="rpmInput" placeholder="Entrer RPM moyen" data-i18n-placeholder="placeholder">
 
-    <button onclick="calculate()">Calculer % RPM</button>
+    <button onclick="calculate()" data-i18n="button">Calculer % RPM</button>
 
     <div id="results"></div>
 
@@ -181,7 +181,7 @@ button:hover {
 
 <footer class="site-footer">
   <div class="wrapper">
-    <p><a href="https://monsieurcharriere.github.io">Revenir au site</a></p>
+    <p><a href="https://monsieurcharriere.github.io" data-i18n="back">Revenir au site</a></p>
   </div>
 </footer>
 
@@ -246,13 +246,13 @@ function calculate() {
     const output = document.getElementById("results");
 
     if (isNaN(rpm)) {
-        output.innerHTML = "<p>Veuillez entrer un nombre valide.</p>";
+        output.innerHTML = "<p>" + t("invalid") + "</p>";
         return;
     }
 
     const percentages = [50, 60, 70, 80, 90, 100, 110, 120];
 
-    let html = "<h3>Résultats</h3><ul>";
+    let html = "<h3>" + t("results") + "</h3><ul>";
     percentages.forEach(p => {
         const value = rpm * (p / 100);
         html += `<li>${p}% = ${value.toFixed(2)}</li>`;
@@ -261,6 +261,66 @@ function calculate() {
 
     output.innerHTML = html;
 }
+
+
+/* -----------------------------------------------------------
+   LANGUAGE TOGGLE (FR / EN)
+----------------------------------------------------------- */
+
+const I18N = {
+    fr: {
+        title: "Calculatrice de RPM",
+        placeholder: "Entrer RPM moyen",
+        button: "Calculer % RPM",
+        results: "Résultats",
+        invalid: "Veuillez entrer un nombre valide.",
+        nav1rm: "1RM estimé",
+        back: "Revenir au site",
+        toggle: "EN",
+        pageTitle: "Calculatrice de RPM"
+    },
+    en: {
+        title: "RPM Calculator",
+        placeholder: "Enter average RPM",
+        button: "Calculate % RPM",
+        results: "Results",
+        invalid: "Please enter a valid number.",
+        nav1rm: "Estimated 1RM",
+        back: "Back to the site",
+        toggle: "FR",
+        pageTitle: "RPM Calculator"
+    }
+};
+
+let lang = localStorage.getItem("rpmLang") === "en" ? "en" : "fr";
+
+function t(key) {
+    return I18N[lang][key];
+}
+
+function applyLanguage() {
+    document.documentElement.lang = lang;
+    document.title = t("pageTitle");
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+        el.textContent = t(el.dataset.i18n);
+    });
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+        el.placeholder = t(el.dataset.i18nPlaceholder);
+    });
+    document.getElementById("langToggle").textContent = t("toggle");
+
+    const output = document.getElementById("results");
+    if (output.innerHTML.trim() !== "") calculate();
+}
+
+document.getElementById("langToggle").addEventListener("click", e => {
+    e.preventDefault();
+    lang = lang === "fr" ? "en" : "fr";
+    localStorage.setItem("rpmLang", lang);
+    applyLanguage();
+});
+
+applyLanguage();
 
 </script>
 
