@@ -199,6 +199,17 @@
     .stage.wall-digital-mode .clock-view { display: none; }
     .stage.wall-digital-mode .wall-digital-view { display: block; }
     body.visible .stage.wall-digital-mode .tod-overlay { display: none; }
+    .wall-fullscreen-time { display: none; }
+    body.visible .stage.wall-digital-mode .wall-digital-view { display: none; }
+    body.visible .stage.wall-digital-mode .wall-fullscreen-time {
+      display: block;
+      color: #fff;
+      font-size: min(18vw, 40vh);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      white-space: nowrap;
+    }
     .ring-bg { fill: none; stroke: #1c2733; stroke-width: 10; }
     .stage.timer-mode { background: #000; }
     .ring-fg { fill: none; stroke-width: 10; stroke-linecap: butt; transform: rotate(-90deg); transform-origin: 200px 200px; }
@@ -366,6 +377,7 @@
     <svg class="wall-digital-view" viewBox="0 0 400 400" role="img" aria-label="Heure actuelle">
       <text id="wallTime" x="200" y="200" fill="#fff" font-size="65" font-weight="700" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Inter, sans-serif" style="font-variant-numeric: tabular-nums">--:--:--</text>
     </svg>
+    <div class="wall-fullscreen-time" id="wallFullscreenTime" aria-label="Heure actuelle">--:--:--</div>
 
     <svg class="timer-view" viewBox="0 0 400 400" role="img" aria-label="Minuterie">
       <circle class="ring-bg" cx="200" cy="200" r="175"/>
@@ -791,6 +803,7 @@ function tick() {
     $("tod").textContent = tod;
     $("todOverlay").textContent = tod;
     $("wallTime").textContent = tod;
+    $("wallFullscreenTime").textContent = tod;
 
     if (mode === "session") {
         renderTimer();
