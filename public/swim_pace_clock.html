@@ -297,8 +297,8 @@
     </div>
 
     <div class="toggle" role="tablist">
-      <button type="button" id="modeWall" class="active">Horloge murale</button>
-      <button type="button" id="modeSession">Entraînement</button>
+      <button type="button" id="modeWall">Horloge murale</button>
+      <button type="button" id="modeSession" class="active">Entraînement</button>
     </div>
 
     <div id="typeBox" hidden>
@@ -471,7 +471,7 @@ HANDS.forEach(h => {
 });
 
 /* State */
-let mode = "wall";        // "wall" | "session"
+let mode = "session";     // "wall" | "session"
 let running = false;
 let sessionStart = null;  // ms
 let soundOn = true;
@@ -886,7 +886,7 @@ function tick() {
     requestAnimationFrame(tick);
 }
 
-setMode("wall");
+setMode("session");
 tick();
 </script>
 
