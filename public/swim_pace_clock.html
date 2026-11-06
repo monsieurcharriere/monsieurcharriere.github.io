@@ -194,7 +194,11 @@
     .timer-view { display: none; }
     .stage.timer-mode .clock-view { display: none; }
     .stage.timer-mode .timer-view { display: block; }
-    .stage.timer-mode .sendoff { display: none; }
+    .wall-digital-view { display: none; }
+    .stage.wall-digital-mode { background: #000; }
+    .stage.wall-digital-mode .clock-view { display: none; }
+    .stage.wall-digital-mode .wall-digital-view { display: block; }
+    body.visible .stage.wall-digital-mode .tod-overlay { display: none; }
     .ring-bg { fill: none; stroke: #1c2733; stroke-width: 10; }
     .stage.timer-mode { background: #000; }
     .ring-fg { fill: none; stroke-width: 10; stroke-linecap: butt; transform: rotate(-90deg); transform-origin: 200px 200px; }
@@ -234,24 +238,6 @@
       filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.6));
     }
 
-    .sendoff {
-      position: absolute;
-      top: 24px;
-      right: 24px;
-      width: 250px;
-      padding: 14px 16px;
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: rgba(11, 32, 56, 0.8);
-    }
-
-    .sendoff .row { display: flex; justify-content: space-between; align-items: center; }
-    .sendoff .t { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: #9fb3c8; }
-    .sendoff .n { font-size: 1.1rem; font-weight: 700; font-variant-numeric: tabular-nums; }
-    .bar { height: 6px; border-radius: 3px; background: #1d3855; margin: 10px 0 6px; overflow: hidden; }
-    .bar i { display: block; height: 100%; width: 0; background: #0a84ff; }
-    .sendoff .sub { display: flex; justify-content: space-between; font-size: 0.65rem; color: #9fb3c8; }
-
     /* Visible mode: hide the panel, clock fills the screen */
     body.visible { padding: 0; }
     body.visible .app { grid-template-columns: 1fr; height: 100vh; border-radius: 0; max-width: none; }
@@ -275,7 +261,6 @@
       .app { grid-template-columns: 1fr; height: auto; border-radius: 0; }
       .stage { order: -1; padding: 12px; flex-direction: column; }
       .stage svg { width: 100%; }
-      .sendoff { position: static; margin-top: 12px; width: 100%; }
       .panel { border-right: 0; }
     }
   </style>
@@ -339,13 +324,14 @@
       </fieldset>
     </div>
 
-    <div id="paceDisplayBox" hidden>
-      <div class="label">Affichage des intervalles</div>
-      <div class="toggle" role="group" aria-label="Affichage des intervalles">
-        <button type="button" id="displayDigital" class="active" aria-pressed="true">Numérique</button>
-        <button type="button" id="displayAnalog" aria-pressed="false">Horloge de nage</button>
+    <div id="wallDisplayBox" hidden>
+      <div class="label">Affichage de l'horloge</div>
+      <div class="toggle" role="group" aria-label="Affichage de l'horloge">
+        <button type="button" id="wallAnalog" class="active" aria-pressed="true">Horloge de nage</button>
+        <button type="button" id="wallDigital" aria-pressed="false">Numérique</button>
       </div>
     </div>
+    <button type="button" class="btn small" id="wallVisibleBtn" hidden>Mode plein écran</button>
 
     <div class="btn-row" id="workoutActions">
       <button type="button" class="btn primary" id="startBtn">&#9654; Démarrer</button>
@@ -375,7 +361,10 @@
       <g id="nums"></g>
       <g id="hands"></g>
       <circle cx="200" cy="200" r="19" fill="#fff"/>
-      <text id="preText" x="200" y="300" fill="#5ac8fa" font-size="80" font-weight="700" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Inter, sans-serif"></text>
+    </svg>
+
+    <svg class="wall-digital-view" viewBox="0 0 400 400" role="img" aria-label="Heure actuelle">
+      <text id="wallTime" x="200" y="200" fill="#fff" font-size="65" font-weight="700" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Inter, sans-serif" style="font-variant-numeric: tabular-nums">--:--:--</text>
     </svg>
 
     <svg class="timer-view" viewBox="0 0 400 400" role="img" aria-label="Minuterie">
@@ -386,11 +375,6 @@
       <text id="tSub" x="200" y="290" fill="#9fb3c8" font-size="19" font-weight="600" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Inter, sans-serif"></text>
     </svg>
 
-    <div class="sendoff" id="sendoff">
-      <div class="row"><span class="t">PROCHAIN DÉPART</span><span class="n" id="nextSend2">00:00.0</span></div>
-      <div class="bar"><i id="bar"></i></div>
-      <div class="sub"><span id="modeLabel">Horloge murale</span><span id="cycleLabel">cycle de 60 s</span></div>
-    </div>
   </main>
 
 </div>
@@ -652,15 +636,6 @@ function renderTimer() {
             $("tDigits").textContent = fmtMS(rem);
             $("tDigits").setAttribute("fill", phase.color);
             $("tSub").textContent = (phase.sub ? phase.sub + " · " : "") + (phase.kind === "prep" ? "" : "Restant " + fmtMS(total));
-            if (type === "pace") {
-                const tenths = Math.floor(rem * 10);
-                $("nextSend2").textContent = `${pad(Math.floor(tenths / 600))}:${pad(Math.floor(tenths / 10) % 60)}.${tenths % 10}`;
-                $("cycleLabel").textContent = phase.sub || "Préparation";
-                $("bar").style.width = (el / dur * 100) + "%";
-                $("preText").textContent = phase.kind === "prep" ? String(Math.ceil(rem)) : "";
-                const handTime = phase.kind === "prep" ? 0 : (now - timer.workoutStart) / 1000 - (timer.phases[0].kind === "prep" ? 10 : 0);
-                HANDS.forEach(h => h.node.setAttribute("transform", `rotate(${((handTime + h.offset) % 60) * 6} ${C} ${C})`));
-            }
             const e = Math.floor((now - timer.workoutStart) / 1000);
             $("elapsed").textContent = `${pad(Math.floor(e / 3600))}:${pad(Math.floor(e / 60) % 60)}:${pad(e % 60)}`;
             return;
@@ -674,12 +649,6 @@ function renderTimer() {
         $("tDigits").textContent = "00:00";
         $("tDigits").setAttribute("fill", COLORS.done);
         $("tSub").textContent = "Bon travail !";
-        if (type === "pace") {
-            $("nextSend2").textContent = "00:00.0";
-            $("cycleLabel").textContent = "Terminé";
-            $("bar").style.width = "100%";
-            $("preText").textContent = "";
-        }
         return;
     }
     /* Idle preview */
@@ -692,20 +661,13 @@ function renderTimer() {
     $("tDigits").setAttribute("fill", COLORS.work);
     $("tSub").textContent = prev && prev.sub ? prev.sub : "";
     $("elapsed").textContent = "00:00:00";
-    if (type === "pace") {
-        $("nextSend2").textContent = prev ? fmtMS(prev.dur) : "--:--";
-        $("cycleLabel").textContent = prev ? prev.sub : "Vérifiez les intervalles";
-        $("bar").style.width = "0%";
-        $("preText").textContent = "";
-        HANDS.forEach(h => h.node.setAttribute("transform", `rotate(${h.offset * 6} ${C} ${C})`));
-    }
 }
 
 const TYPE_ROWS = {
     pace: [], tabata: ["rowWork", "rowRest", "rowRounds"], emom: ["rowMinutes"], amrap: ["rowMinutes"]
 };
 
-let paceDisplay = "digital";
+let wallDisplay = "analog";
 
 function setType(tp) {
     type = tp;
@@ -718,19 +680,19 @@ function setType(tp) {
 function applyView() {
     const sess = mode === "session";
     const pace = type === "pace";
-    const digitalPace = sess && pace && paceDisplay === "digital";
     $("typeBox").hidden = !sess;
-    $("paceDisplayBox").hidden = !sess || !pace;
-    $("legendBox").hidden = sess && (!pace || digitalPace);
+    $("wallDisplayBox").hidden = sess;
+    $("wallVisibleBtn").hidden = sess;
+    $("legendBox").hidden = sess || wallDisplay === "digital";
     $("intervalBox").hidden = !sess || !pace;
     $("elapsedLabel").textContent = sess ? "Temps d'entraînement" : "Heure";
     $("workoutActions").hidden = !sess;
     $("workoutOptions").hidden = !sess;
     $("preBtn").hidden = !sess;
-    $("sendoff").hidden = !sess;
-    $("stage").classList.toggle("timer-mode", sess && (!pace || digitalPace));
-    for (const [id, display] of [["displayDigital", "digital"], ["displayAnalog", "analog"]]) {
-        const selected = paceDisplay === display;
+    $("stage").classList.toggle("timer-mode", sess);
+    $("stage").classList.toggle("wall-digital-mode", !sess && wallDisplay === "digital");
+    for (const [id, display] of [["wallDigital", "digital"], ["wallAnalog", "analog"]]) {
+        const selected = wallDisplay === display;
         $(id).classList.toggle("active", selected);
         $(id).setAttribute("aria-pressed", String(selected));
     }
@@ -742,14 +704,13 @@ function applyView() {
 }
 
 document.querySelectorAll(".types button").forEach(b => b.onclick = () => setType(b.dataset.type));
-$("displayDigital").onclick = () => { paceDisplay = "digital"; applyView(); };
-$("displayAnalog").onclick = () => { paceDisplay = "analog"; applyView(); };
+$("wallDigital").onclick = () => { wallDisplay = "digital"; applyView(); };
+$("wallAnalog").onclick = () => { wallDisplay = "analog"; applyView(); };
 
 function setMode(m) {
     mode = m;
     $("modeWall").classList.toggle("active", m === "wall");
     $("modeSession").classList.toggle("active", m === "session");
-    $("modeLabel").textContent = m === "wall" ? "Horloge murale" : "Entraînement";
     $("startBtn").disabled = m === "wall";
     $("resetBtn").disabled = m === "wall";
     updateSoundBtn();
@@ -813,6 +774,7 @@ function setVisible(on) {
 }
 
 $("visibleBtn").onclick = () => setVisible(true);
+$("wallVisibleBtn").onclick = () => setVisible(true);
 $("stage").addEventListener("click", () => {
     if (document.body.classList.contains("visible")) setVisible(false);
 });
@@ -828,6 +790,7 @@ function tick() {
     const tod = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
     $("tod").textContent = tod;
     $("todOverlay").textContent = tod;
+    $("wallTime").textContent = tod;
 
     if (mode === "session") {
         renderTimer();
