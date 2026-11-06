@@ -186,8 +186,9 @@
     .stage.timer-mode .clock-view { display: none; }
     .stage.timer-mode .timer-view { display: block; }
     .stage.timer-mode .sendoff { display: none; }
-    .ring-bg { fill: none; stroke: #16304d; stroke-width: 22; }
-    .ring-fg { fill: none; stroke-width: 22; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 200px 200px; }
+    .ring-bg { fill: none; stroke: #1c2733; stroke-width: 10; }
+    .stage.timer-mode { background: #000; }
+    .ring-fg { fill: none; stroke-width: 10; stroke-linecap: butt; transform: rotate(-90deg); transform-origin: 200px 200px; }
 
     .btn.active { background: #2b5c94; border-color: #4a86c5; color: #fff; }
     .btn:disabled { opacity: 0.4; cursor: default; }
@@ -362,8 +363,8 @@
     </svg>
 
     <svg class="timer-view" viewBox="0 0 400 400" role="img" aria-label="Minuterie">
-      <circle class="ring-bg" cx="200" cy="200" r="170"/>
-      <circle class="ring-fg" id="ringFg" cx="200" cy="200" r="170" stroke="#2ecc5b"/>
+      <circle class="ring-bg" cx="200" cy="200" r="175"/>
+      <circle class="ring-fg" id="ringFg" cx="200" cy="200" r="175" stroke="#2bff6e"/>
       <text id="tLabel" x="200" y="110" fill="#fff" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Inter, sans-serif" letter-spacing="3"></text>
       <text id="tDigits" x="200" y="205" fill="#fff" font-size="104" font-weight="700" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Inter, sans-serif" style="font-variant-numeric: tabular-nums"></text>
       <text id="tSub" x="200" y="290" fill="#9fb3c8" font-size="19" font-weight="600" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Inter, sans-serif"></text>
@@ -473,7 +474,7 @@ function unlockAudio() {
 }
 ["pointerdown", "keydown"].forEach(ev => document.addEventListener(ev, unlockAudio));
 
-const COLORS = { prep: "#5ac8fa", work: "#2ecc5b", rest: "#ff453a", done: "#ffffff" };
+const COLORS = { prep: "#35d0ff", work: "#2bff6e", rest: "#ff2d55", done: "#ffffff" };
 const num = (id, d) => Math.max(0, parseInt($(id).value, 10) || d);
 
 function buildPhases(withPrep) {
@@ -517,7 +518,7 @@ function stopTimer() { timer = null; updateStartBtn(); }
 
 function renderTimer() {
     const ring = $("ringFg");
-    const C2 = 2 * Math.PI * 170;
+    const C2 = 2 * Math.PI * 175;
     ring.setAttribute("stroke-dasharray", C2);
 
     let phase, rem, dur, total = 0, elapsedWork = 0;
