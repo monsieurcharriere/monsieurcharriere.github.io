@@ -437,6 +437,7 @@ let sessionStart = null;  // ms
 let soundOn = true;
 let preEnd = null;        // ms, end of the pre-workout countdown
 let preCeil = null;
+let pausedAt = null;      // ms timestamp while paused
 let type = "pace";        // "pace" | "tabata" | "emom" | "amrap"
 let timer = null;         // { phases, idx, phaseStart, workoutStart, ceil }
 let preCountdownOn = true;
@@ -503,6 +504,21 @@ const fmtMS = sec => {
     return `${pad(Math.floor(c / 60))}:${pad(c % 60)}`;
 };
 
+const nowMs = () => pausedAt !== null ? pausedAt : Date.now();
+
+function togglePause() {
+    if (pausedAt === null) {
+        pausedAt = Date.now();
+    } else {
+        const d = Date.now() - pausedAt;
+        pausedAt = null;
+        if (timer) { timer.phaseStart += d; timer.workoutStart += d; }
+        if (sessionStart) sessionStart += d;
+        if (preEnd) preEnd += d;
+    }
+    updateStartBtn();
+}
+
 function timerActive() { return !!timer && !timer.done; }
 
 function startTimer() {
@@ -514,7 +530,7 @@ function startTimer() {
     updateStartBtn();
 }
 
-function stopTimer() { timer = null; updateStartBtn(); }
+function stopTimer() { timer = null; pausedAt = null; updateStartBtn(); }
 
 function renderTimer() {
     const ring = $("ringFg");
@@ -523,7 +539,7 @@ function renderTimer() {
 
     let phase, rem, dur, total = 0, elapsedWork = 0;
     if (timer && !timer.done) {
-        const now = Date.now();
+        const now = nowMs();
         phase = timer.phases[timer.idx];
         let el = (now - timer.phaseStart) / 1000;
         while (el >= phase.dur) {
@@ -554,6 +570,7 @@ function renderTimer() {
             $("tLabel").textContent = phase.name;
             $("tLabel").setAttribute("fill", phase.color);
             $("tDigits").textContent = fmtMS(rem);
+            $("tDigits").setAttribute("fill", phase.color);
             $("tSub").textContent = (phase.sub ? phase.sub + " · " : "") + (phase.kind === "prep" ? "" : "Restant " + fmtMS(total));
             const e = Math.floor((now - timer.workoutStart) / 1000);
             $("elapsed").textContent = `${pad(Math.floor(e / 3600))}:${pad(Math.floor(e / 60) % 60)}:${pad(e % 60)}`;
@@ -568,6 +585,7 @@ function renderTimer() {
         $("tLabel").textContent = "TERMINÉ";
         $("tLabel").setAttribute("fill", COLORS.done);
         $("tDigits").textContent = "00:00";
+        $("tDigits").setAttribute("fill", COLORS.done);
         $("tSub").textContent = "Bon travail !";
         $("nextSend").textContent = "00:00.0";
         return;
@@ -577,8 +595,9 @@ function renderTimer() {
     ring.setAttribute("stroke", COLORS.work);
     ring.setAttribute("stroke-dashoffset", C2);
     $("tLabel").textContent = "PRÊT";
-    $("tLabel").setAttribute("fill", "#fff");
+    $("tLabel").setAttribute("fill", COLORS.work);
     $("tDigits").textContent = prev ? fmtMS(prev.dur) : "00:00";
+    $("tDigits").setAttribute("fill", COLORS.work);
     $("tSub").textContent = prev && prev.sub ? prev.sub : "";
     $("elapsed").textContent = "00:00:00";
     $("nextSend").textContent = "00:00.0";
@@ -621,14 +640,15 @@ function setMode(m) {
     $("resetBtn").disabled = m === "wall";
     updateSoundBtn();
     updatePreBtn();
-    if (m === "wall") { running = false; sessionStart = null; preEnd = null; timer = null; }
+    if (m === "wall") { running = false; sessionStart = null; preEnd = null; timer = null; pausedAt = null; }
     lastCycle = null; lastCeil = null;
     applyView();
     updateStartBtn();
 }
 
 function updateStartBtn() {
-    $("startBtn").innerHTML = (running || preEnd || timerActive()) ? "&#10074;&#10074; Arrêter" : "&#9654; Démarrer";
+    const active = running || preEnd || timerActive();
+    $("startBtn").innerHTML = !active ? "&#9654; Démarrer" : (pausedAt !== null ? "&#9654; Reprendre" : "&#10074;&#10074; Pause");
 }
 
 $("modeWall").onclick = () => setMode("wall");
@@ -637,11 +657,11 @@ $("modeSession").onclick = () => setMode("session");
 $("startBtn").onclick = () => {
     if (mode !== "session") return;
     if (type !== "pace") {
-        if (timerActive()) stopTimer(); else startTimer();
+        if (timerActive()) togglePause(); else startTimer();
         return;
     }
-    if (running || preEnd) { running = false; preEnd = null; }
-    else if (preCountdownOn) { preEnd = Date.now() + 10000; preCeil = null; }
+    if (running || preEnd) { togglePause(); return; }
+    if (preCountdownOn) { preEnd = Date.now() + 10000; preCeil = null; }
     else { sessionStart = Date.now(); running = true; lastCycle = null; lastCeil = null; }
     updateStartBtn();
 };
@@ -652,7 +672,7 @@ $("preBtn").onclick = () => {
 };
 
 $("resetBtn").onclick = () => {
-    running = false; sessionStart = null; preEnd = null; timer = null; lastCycle = null; lastCeil = null;
+    running = false; sessionStart = null; preEnd = null; timer = null; pausedAt = null; lastCycle = null; lastCeil = null;
     updateStartBtn();
 };
 
@@ -718,10 +738,10 @@ function tick() {
     /* Pre-workout countdown */
     let preText = "";
     if (preEnd) {
-        const rem = (preEnd - Date.now()) / 1000;
+        const rem = (preEnd - nowMs()) / 1000;
         if (rem <= 0) {
             preEnd = null;
-            sessionStart = Date.now();
+            sessionStart = nowMs();
             running = true;
             lastCycle = null; lastCeil = null;
             startBeep();
@@ -743,7 +763,7 @@ function tick() {
     if (mode === "wall") {
         t = now.getMinutes() * 60 + wallSec;
     } else if (running && sessionStart) {
-        elapsedSec = (Date.now() - sessionStart) / 1000;
+        elapsedSec = (nowMs() - sessionStart) / 1000;
         t = elapsedSec;
     } else {
         t = 0;
@@ -757,7 +777,7 @@ function tick() {
     /* Send-off countdown */
     const interval = parseInt($("interval").value, 10);
     const remaining = interval - (t % interval);
-    const shown = (mode === "session" && !running) ? (preEnd ? Math.max(0, (preEnd - Date.now()) / 1000) : interval) : remaining;
+    const shown = (mode === "session" && !running) ? (preEnd ? Math.max(0, (preEnd - nowMs()) / 1000) : interval) : remaining;
     const tenths = Math.floor(shown * 10);
     const txt = `${pad(Math.floor(tenths / 600))}:${pad(Math.floor(tenths / 10) % 60)}.${tenths % 10}`;
     $("nextSend").textContent = txt;
