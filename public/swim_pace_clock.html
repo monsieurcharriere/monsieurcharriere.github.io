@@ -189,7 +189,7 @@
     .ring-bg { fill: none; stroke: #1c2733; stroke-width: 10; }
     .stage.timer-mode { background: #000; }
     .ring-fg { fill: none; stroke-width: 10; stroke-linecap: butt; transform: rotate(-90deg); transform-origin: 200px 200px; }
-    #tDigits { font-weight: 900; filter: drop-shadow(0 0 5px currentColor); }
+    #tDigits { font-weight: 900; }
 
     .btn.active { background: #2b5c94; border-color: #4a86c5; color: #fff; }
     .btn:disabled { opacity: 0.4; cursor: default; }
@@ -613,7 +613,6 @@ function renderTimer() {
             $("tLabel").setAttribute("fill", phase.color);
             $("tDigits").textContent = fmtMS(rem);
             $("tDigits").setAttribute("fill", phase.color);
-            $("tDigits").style.color = phase.color;
             $("tSub").textContent = (phase.sub ? phase.sub + " · " : "") + (phase.kind === "prep" ? "" : "Restant " + fmtMS(total));
             const e = Math.floor((now - timer.workoutStart) / 1000);
             $("elapsed").textContent = `${pad(Math.floor(e / 3600))}:${pad(Math.floor(e / 60) % 60)}:${pad(e % 60)}`;
@@ -629,7 +628,6 @@ function renderTimer() {
         $("tLabel").setAttribute("fill", COLORS.done);
         $("tDigits").textContent = "00:00";
         $("tDigits").setAttribute("fill", COLORS.done);
-        $("tDigits").style.color = COLORS.done;
         $("tSub").textContent = "Bon travail !";
         $("nextSend").textContent = "00:00.0";
         return;
@@ -642,7 +640,6 @@ function renderTimer() {
     $("tLabel").setAttribute("fill", COLORS.work);
     $("tDigits").textContent = prev ? fmtMS(prev.dur) : "00:00";
     $("tDigits").setAttribute("fill", COLORS.work);
-    $("tDigits").style.color = COLORS.work;
     $("tSub").textContent = prev && prev.sub ? prev.sub : "";
     $("elapsed").textContent = "00:00:00";
     $("nextSend").textContent = "00:00.0";
@@ -870,7 +867,6 @@ function tick() {
         $("tLabel").setAttribute("fill", color);
         $("tDigits").textContent = fmtMS(shown);
         $("tDigits").setAttribute("fill", color);
-        $("tDigits").style.color = color;
         $("tSub").textContent = preparing ? "Début de l’entraînement" : "Prochain départ";
     }
 
