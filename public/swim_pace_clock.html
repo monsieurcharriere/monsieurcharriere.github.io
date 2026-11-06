@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Horloge de pacing</title>
+  <title>Chronomètre d'entraînement</title>
   <link rel="icon" href="images/favicon.ico" type="image/x-icon">
   <style>
     * { box-sizing: border-box; }
@@ -278,8 +278,8 @@
 
   <aside class="panel">
     <div>
-      <div class="eyebrow">Chronomètre</div>
-      <h1>Horloge de pacing</h1>
+      <div class="eyebrow">Workout Timer</div>
+      <h1>Chronomètre d'entraînement</h1>
     </div>
 
     <div class="tod" aria-live="off">
@@ -319,7 +319,7 @@
     </div>
 
     <div id="intervalBox">
-      <div class="label" style="text-transform:none;font-size:0.9rem;color:#fff;letter-spacing:0">Intervalle de départ</div>
+      <label id="wallIntervalLabel" for="interval" class="label" style="display:block;text-transform:none;font-size:0.9rem;color:#fff;letter-spacing:0">Intervalle de départ</label>
       <select id="interval">
         <option value="15">15 secondes</option>
         <option value="20">20 secondes</option>
@@ -328,6 +328,39 @@
         <option value="60" selected>1 minute</option>
         <option value="90">1 min 30</option>
         <option value="120">2 minutes</option>
+      </select>
+      <label id="workoutIntervalLabel" for="workoutInterval" class="label" style="display:block;text-transform:none;font-size:0.9rem;color:#fff;letter-spacing:0" hidden>Durée de l'intervalle</label>
+      <select id="workoutInterval" hidden>
+        <option value="10">10 secondes</option>
+        <option value="20">20 secondes</option>
+        <option value="30">30 secondes</option>
+        <option value="40">40 secondes</option>
+        <option value="50">50 secondes</option>
+        <option value="60" selected>1 minute</option>
+        <option value="70">1 min 10</option>
+        <option value="80">1 min 20</option>
+        <option value="90">1 min 30</option>
+        <option value="100">1 min 40</option>
+        <option value="110">1 min 50</option>
+        <option value="120">2 minutes</option>
+        <option value="130">2 min 10</option>
+        <option value="140">2 min 20</option>
+        <option value="150">2 min 30</option>
+        <option value="160">2 min 40</option>
+        <option value="170">2 min 50</option>
+        <option value="180">3 minutes</option>
+        <option value="190">3 min 10</option>
+        <option value="200">3 min 20</option>
+        <option value="210">3 min 30</option>
+        <option value="220">3 min 40</option>
+        <option value="230">3 min 50</option>
+        <option value="240">4 minutes</option>
+        <option value="250">4 min 10</option>
+        <option value="260">4 min 20</option>
+        <option value="270">4 min 30</option>
+        <option value="280">4 min 40</option>
+        <option value="290">4 min 50</option>
+        <option value="300">5 minutes</option>
       </select>
     </div>
 
@@ -349,7 +382,7 @@
     </div>
     <button type="button" class="btn small" id="preBtn">Compte à rebours de 10 s : activé</button>
 
-    <div class="stats">
+    <div class="stats" id="stats">
       <div><div class="k">Temps écoulé</div><div class="v" id="elapsed">00:00:00</div></div>
       <div><div class="k">Prochain départ</div><div class="v" id="nextSend">00:00.0</div></div>
     </div>
@@ -633,6 +666,11 @@ function applyView() {
     $("paceDisplayBox").hidden = !sess || !pace;
     $("legendBox").hidden = sess && (!pace || digitalPace);
     $("intervalBox").hidden = sess && !pace;
+    $("wallIntervalLabel").hidden = sess;
+    $("interval").hidden = sess;
+    $("workoutIntervalLabel").hidden = !sess;
+    $("workoutInterval").hidden = !sess;
+    $("stats").hidden = sess;
     $("stage").classList.toggle("timer-mode", sess && (!pace || digitalPace));
     for (const [id, display] of [["displayDigital", "digital"], ["displayAnalog", "analog"]]) {
         const selected = paceDisplay === display;
@@ -661,6 +699,7 @@ function setMode(m) {
     updatePreBtn();
     if (m === "wall") { running = false; sessionStart = null; preEnd = null; timer = null; pausedAt = null; }
     lastCycle = null; lastCeil = null;
+    updateInterval();
     applyView();
     updateStartBtn();
 }
@@ -717,10 +756,17 @@ $("soundBtn").onclick = () => {
     if (soundOn) countdownBeep();
 };
 
-$("interval").onchange = () => {
-    $("cycleLabel").textContent = "cycle de " + $("interval").value + " s";
+function currentInterval() {
+    return Number($(mode === "session" ? "workoutInterval" : "interval").value);
+}
+
+function updateInterval() {
+    $("cycleLabel").textContent = "cycle de " + currentInterval() + " s";
     lastCycle = null; lastCeil = null;
-};
+}
+
+$("interval").onchange = updateInterval;
+$("workoutInterval").onchange = updateInterval;
 
 function setVisible(on) {
     document.body.classList.toggle("visible", on);
@@ -794,7 +840,7 @@ function tick() {
     });
 
     /* Send-off countdown */
-    const interval = parseInt($("interval").value, 10);
+    const interval = currentInterval();
     const remaining = interval - (t % interval);
     const shown = (mode === "session" && !running) ? (preEnd ? Math.max(0, (preEnd - nowMs()) / 1000) : interval) : remaining;
     const tenths = Math.floor(shown * 10);
