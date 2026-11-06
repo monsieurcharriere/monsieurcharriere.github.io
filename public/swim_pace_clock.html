@@ -181,6 +181,15 @@
       font-size: 1rem;
       font-weight: 600;
     }
+    .interval-list { display: grid; gap: 10px; }
+    .interval-row { padding: 10px; border: 1px solid rgba(255,255,255,.14); border-radius: 12px; }
+    .interval-heading { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .interval-heading strong { font-size: .9rem; }
+    .interval-heading button { padding: 6px 10px; }
+    .interval-row .settings { grid-template-columns: 1fr 1fr 1.2fr; }
+    .interval-row select { margin-top: 4px; padding: 10px 4px; font-size: .85rem; }
+    .interval-actions { margin-top: 10px; }
+    #intervalFields { border: 0; padding: 0; margin: 0; min-width: 0; }
 
     .timer-view { display: none; }
     .stage.timer-mode .clock-view { display: none; }
@@ -317,50 +326,17 @@
       </div>
     </div>
 
-    <div id="intervalBox">
-      <label id="wallIntervalLabel" for="interval" class="label" style="display:block;text-transform:none;font-size:0.9rem;color:#fff;letter-spacing:0">Intervalle de départ</label>
-      <select id="interval">
-        <option value="15">15 secondes</option>
-        <option value="20">20 secondes</option>
-        <option value="30">30 secondes</option>
-        <option value="45">45 secondes</option>
-        <option value="60" selected>1 minute</option>
-        <option value="90">1 min 30</option>
-        <option value="120">2 minutes</option>
-      </select>
-      <label id="workoutIntervalLabel" for="workoutInterval" class="label" style="display:block;text-transform:none;font-size:0.9rem;color:#fff;letter-spacing:0" hidden>Durée de l'intervalle</label>
-      <select id="workoutInterval" hidden>
-        <option value="10">10 secondes</option>
-        <option value="20">20 secondes</option>
-        <option value="30">30 secondes</option>
-        <option value="40">40 secondes</option>
-        <option value="50">50 secondes</option>
-        <option value="60" selected>1 minute</option>
-        <option value="70">1 min 10</option>
-        <option value="80">1 min 20</option>
-        <option value="90">1 min 30</option>
-        <option value="100">1 min 40</option>
-        <option value="110">1 min 50</option>
-        <option value="120">2 minutes</option>
-        <option value="130">2 min 10</option>
-        <option value="140">2 min 20</option>
-        <option value="150">2 min 30</option>
-        <option value="160">2 min 40</option>
-        <option value="170">2 min 50</option>
-        <option value="180">3 minutes</option>
-        <option value="190">3 min 10</option>
-        <option value="200">3 min 20</option>
-        <option value="210">3 min 30</option>
-        <option value="220">3 min 40</option>
-        <option value="230">3 min 50</option>
-        <option value="240">4 minutes</option>
-        <option value="250">4 min 10</option>
-        <option value="260">4 min 20</option>
-        <option value="270">4 min 30</option>
-        <option value="280">4 min 40</option>
-        <option value="290">4 min 50</option>
-        <option value="300">5 minutes</option>
-      </select>
+    <div id="intervalBox" hidden>
+      <fieldset id="intervalFields">
+      <div class="label">Intervalles personnalisés</div>
+      <div id="intervalList" class="interval-list"></div>
+      <button type="button" class="btn small interval-actions" id="addInterval">+ Ajouter un intervalle</button>
+      <div class="settings">
+        <label for="paceRounds">Rondes<input type="number" id="paceRounds" value="1" min="1" max="100" step="1" required></label>
+      </div>
+      <p id="intervalError" role="alert" tabindex="-1" hidden>Chaque intervalle doit durer au moins une seconde. Vérifiez les durées et le nombre de rondes.</p>
+      <p class="label">Les rondes répètent tous les intervalles dans l'ordre.</p>
+      </fieldset>
     </div>
 
     <div id="paceDisplayBox" hidden>
@@ -472,17 +448,11 @@ HANDS.forEach(h => {
 
 /* State */
 let mode = "session";     // "wall" | "session"
-let running = false;
-let sessionStart = null;  // ms
 let soundOn = true;
-let preEnd = null;        // ms, end of the pre-workout countdown
-let preCeil = null;
 let pausedAt = null;      // ms timestamp while paused
 let type = "pace";        // "pace" | "tabata" | "emom" | "amrap"
 let timer = null;         // { phases, idx, phaseStart, workoutStart, ceil }
 let preCountdownOn = true;
-let lastCycle = null;
-let lastCeil = null;
 let audioCtx = null;
 
 const $ = id => document.getElementById(id);
@@ -518,10 +488,70 @@ function unlockAudio() {
 const COLORS = { prep: "#00eaff", work: "#00ff00", rest: "#ff00bf", done: "#ffffff" };
 const num = (id, d) => Math.max(0, parseInt($(id).value, 10) || d);
 
+function addInterval() {
+    const row = document.createElement("div");
+    row.className = "interval-row";
+    row.innerHTML = `<div class="interval-heading"><strong></strong><button type="button" class="btn small remove-interval">Retirer</button></div>
+      <div class="settings">
+        <label>Minutes<input class="interval-minutes" type="number" min="0" max="999" step="1" value="1" required></label>
+        <label>Secondes<input class="interval-seconds" type="number" min="0" max="59" step="1" value="0" required></label>
+        <label>Type<select class="interval-kind"><option value="work">Travail</option><option value="rest">Repos</option></select></label>
+      </div>`;
+    $("intervalList").appendChild(row);
+    updateIntervalRows();
+}
+
+function updateIntervalRows() {
+    const rows = [...$("intervalList").children];
+    rows.forEach((row, i) => {
+        row.querySelector("strong").textContent = `Intervalle ${i + 1}`;
+        const remove = row.querySelector(".remove-interval");
+        remove.disabled = rows.length === 1;
+        remove.setAttribute("aria-label", `Retirer l'intervalle ${i + 1}`);
+    });
+}
+
+$("addInterval").addEventListener("click", addInterval);
+$("intervalList").addEventListener("click", event => {
+    const button = event.target.closest(".remove-interval");
+    if (button && $("intervalList").children.length > 1) {
+        button.closest(".interval-row").remove();
+        updateIntervalRows();
+    }
+});
+addInterval();
+
+function customIntervals() {
+    const rows = [...$("intervalList").children];
+    const valid = $("paceRounds").validity.valid && rows.every(row => {
+        const min = row.querySelector(".interval-minutes");
+        const sec = row.querySelector(".interval-seconds");
+        return min.validity.valid && sec.validity.valid && Number(min.value) * 60 + Number(sec.value) > 0;
+    });
+    if (!valid) return null;
+    return rows.map(row => ({
+        dur: Number(row.querySelector(".interval-minutes").value) * 60 + Number(row.querySelector(".interval-seconds").value),
+        kind: row.querySelector(".interval-kind").value
+    }));
+}
+
 function buildPhases(withPrep) {
     const p = [];
     if (withPrep) p.push({ name: "PRÊT", dur: 10, color: COLORS.prep, kind: "prep" });
-    if (type === "tabata") {
+    if (type === "pace") {
+        const intervals = customIntervals();
+        if (!intervals) return [];
+        const rounds = Number($("paceRounds").value);
+        for (let round = 1; round <= rounds; round++) {
+            intervals.forEach((interval, i) => {
+                p.push({
+                    name: interval.kind === "rest" ? "REPOS" : "TRAVAIL",
+                    dur: interval.dur, kind: interval.kind, color: COLORS[interval.kind],
+                    sub: `Int. ${i + 1}/${intervals.length} · Ronde ${round}/${rounds}`
+                });
+            });
+        }
+    } else if (type === "tabata") {
         const w = Math.max(1, num("setWork", 20)), r = num("setRest", 10), n = Math.max(1, num("setRounds", 8));
         for (let i = 1; i <= n; i++) {
             p.push({ name: "TRAVAIL", dur: w, color: COLORS.work, kind: "work", sub: `Ronde ${i} / ${n}` });
@@ -553,8 +583,6 @@ function togglePause() {
         const d = Date.now() - pausedAt;
         pausedAt = null;
         if (timer) { timer.phaseStart += d; timer.workoutStart += d; }
-        if (sessionStart) sessionStart += d;
-        if (preEnd) preEnd += d;
     }
     updateStartBtn();
 }
@@ -562,22 +590,31 @@ function togglePause() {
 function timerActive() { return !!timer && !timer.done; }
 
 function startTimer() {
+    if (type === "pace") {
+        const valid = customIntervals() !== null;
+        $("intervalError").hidden = valid;
+        if (!valid) {
+            $("intervalError").focus();
+            return;
+        }
+    }
     const phases = buildPhases(preCountdownOn);
     if (!phases.length) return;
     const now = Date.now();
     timer = { phases, idx: 0, phaseStart: now, workoutStart: now, ceil: null, done: false };
+    $("intervalFields").disabled = type === "pace";
     if (phases[0].kind !== "prep") startBeep();
     updateStartBtn();
 }
 
-function stopTimer() { timer = null; pausedAt = null; updateStartBtn(); }
+function stopTimer() { timer = null; pausedAt = null; $("intervalFields").disabled = false; updateStartBtn(); }
 
 function renderTimer() {
     const ring = $("ringFg");
     const C2 = 2 * Math.PI * 175;
     ring.setAttribute("stroke-dasharray", C2);
 
-    let phase, rem, dur, total = 0, elapsedWork = 0;
+    let phase, rem, dur, total = 0;
     if (timer && !timer.done) {
         const now = nowMs();
         phase = timer.phases[timer.idx];
@@ -587,6 +624,9 @@ function renderTimer() {
             timer.phaseStart += phase.dur * 1000;
             if (timer.idx >= timer.phases.length) {
                 timer.done = true;
+                $("intervalFields").disabled = false;
+                const e = Math.floor((timer.phaseStart - timer.workoutStart) / 1000);
+                $("elapsed").textContent = `${pad(Math.floor(e / 3600))}:${pad(Math.floor(e / 60) % 60)}:${pad(e % 60)}`;
                 startBeep();
                 updateStartBtn();
                 break;
@@ -612,6 +652,15 @@ function renderTimer() {
             $("tDigits").textContent = fmtMS(rem);
             $("tDigits").setAttribute("fill", phase.color);
             $("tSub").textContent = (phase.sub ? phase.sub + " · " : "") + (phase.kind === "prep" ? "" : "Restant " + fmtMS(total));
+            if (type === "pace") {
+                const tenths = Math.floor(rem * 10);
+                $("nextSend2").textContent = `${pad(Math.floor(tenths / 600))}:${pad(Math.floor(tenths / 10) % 60)}.${tenths % 10}`;
+                $("cycleLabel").textContent = phase.sub || "Préparation";
+                $("bar").style.width = (el / dur * 100) + "%";
+                $("preText").textContent = phase.kind === "prep" ? String(Math.ceil(rem)) : "";
+                const handTime = phase.kind === "prep" ? 0 : (now - timer.workoutStart) / 1000 - (timer.phases[0].kind === "prep" ? 10 : 0);
+                HANDS.forEach(h => h.node.setAttribute("transform", `rotate(${((handTime + h.offset) % 60) * 6} ${C} ${C})`));
+            }
             const e = Math.floor((now - timer.workoutStart) / 1000);
             $("elapsed").textContent = `${pad(Math.floor(e / 3600))}:${pad(Math.floor(e / 60) % 60)}:${pad(e % 60)}`;
             return;
@@ -625,6 +674,12 @@ function renderTimer() {
         $("tDigits").textContent = "00:00";
         $("tDigits").setAttribute("fill", COLORS.done);
         $("tSub").textContent = "Bon travail !";
+        if (type === "pace") {
+            $("nextSend2").textContent = "00:00.0";
+            $("cycleLabel").textContent = "Terminé";
+            $("bar").style.width = "100%";
+            $("preText").textContent = "";
+        }
         return;
     }
     /* Idle preview */
@@ -637,6 +692,13 @@ function renderTimer() {
     $("tDigits").setAttribute("fill", COLORS.work);
     $("tSub").textContent = prev && prev.sub ? prev.sub : "";
     $("elapsed").textContent = "00:00:00";
+    if (type === "pace") {
+        $("nextSend2").textContent = prev ? fmtMS(prev.dur) : "--:--";
+        $("cycleLabel").textContent = prev ? prev.sub : "Vérifiez les intervalles";
+        $("bar").style.width = "0%";
+        $("preText").textContent = "";
+        HANDS.forEach(h => h.node.setAttribute("transform", `rotate(${h.offset * 6} ${C} ${C})`));
+    }
 }
 
 const TYPE_ROWS = {
@@ -661,10 +723,6 @@ function applyView() {
     $("paceDisplayBox").hidden = !sess || !pace;
     $("legendBox").hidden = sess && (!pace || digitalPace);
     $("intervalBox").hidden = !sess || !pace;
-    $("wallIntervalLabel").hidden = sess;
-    $("interval").hidden = sess;
-    $("workoutIntervalLabel").hidden = !sess;
-    $("workoutInterval").hidden = !sess;
     $("elapsedLabel").textContent = sess ? "Temps d'entraînement" : "Heure";
     $("workoutActions").hidden = !sess;
     $("workoutOptions").hidden = !sess;
@@ -696,15 +754,13 @@ function setMode(m) {
     $("resetBtn").disabled = m === "wall";
     updateSoundBtn();
     updatePreBtn();
-    if (m === "wall") { running = false; sessionStart = null; preEnd = null; timer = null; pausedAt = null; }
-    lastCycle = null; lastCeil = null;
-    updateInterval();
+    if (m === "wall") stopTimer();
     applyView();
     updateStartBtn();
 }
 
 function updateStartBtn() {
-    const active = running || preEnd || timerActive();
+    const active = timerActive();
     $("startBtn").innerHTML = !active ? "&#9654; Démarrer" : (pausedAt !== null ? "&#9654; Reprendre" : "&#10074;&#10074; Pause");
 }
 
@@ -713,14 +769,7 @@ $("modeSession").onclick = () => setMode("session");
 
 $("startBtn").onclick = () => {
     if (mode !== "session") return;
-    if (type !== "pace") {
-        if (timerActive()) togglePause(); else startTimer();
-        return;
-    }
-    if (running || preEnd) { togglePause(); return; }
-    if (preCountdownOn) { preEnd = Date.now() + 10000; preCeil = null; }
-    else { sessionStart = Date.now(); running = true; lastCycle = null; lastCeil = null; }
-    updateStartBtn();
+    if (timerActive()) togglePause(); else startTimer();
 };
 
 $("preBtn").onclick = () => {
@@ -729,8 +778,7 @@ $("preBtn").onclick = () => {
 };
 
 $("resetBtn").onclick = () => {
-    running = false; sessionStart = null; preEnd = null; timer = null; pausedAt = null; lastCycle = null; lastCeil = null;
-    updateStartBtn();
+    stopTimer();
 };
 
 function updateSoundBtn() {
@@ -754,18 +802,6 @@ $("soundBtn").onclick = () => {
     updateSoundBtn();
     if (soundOn) countdownBeep();
 };
-
-function currentInterval() {
-    return Number($(mode === "session" ? "workoutInterval" : "interval").value);
-}
-
-function updateInterval() {
-    $("cycleLabel").textContent = "cycle de " + currentInterval() + " s";
-    lastCycle = null; lastCeil = null;
-}
-
-$("interval").onchange = updateInterval;
-$("workoutInterval").onchange = updateInterval;
 
 function setVisible(on) {
     document.body.classList.toggle("visible", on);
@@ -793,95 +829,18 @@ function tick() {
     $("tod").textContent = tod;
     $("todOverlay").textContent = tod;
 
-    if (mode === "session" && type !== "pace") {
+    if (mode === "session") {
         renderTimer();
         requestAnimationFrame(tick);
         return;
     }
 
-    /* Pre-workout countdown */
-    let preText = "";
-    if (preEnd) {
-        const rem = (preEnd - nowMs()) / 1000;
-        if (rem <= 0) {
-            preEnd = null;
-            sessionStart = nowMs();
-            running = true;
-            lastCycle = null; lastCeil = null;
-            startBeep();
-            updateStartBtn();
-        } else {
-            const c = Math.ceil(rem);
-            if (c !== preCeil) {
-                if (c <= 3) countdownBeep();
-                preCeil = c;
-            }
-            preText = String(c);
-        }
-    }
-    $("preText").textContent = preText;
-
-    /* Reference time for hands and send-off */
-    let t;
-    let elapsedSec = 0;
-    if (mode === "wall") {
-        t = now.getMinutes() * 60 + wallSec;
-    } else if (running && sessionStart) {
-        elapsedSec = (nowMs() - sessionStart) / 1000;
-        t = elapsedSec;
-    } else {
-        t = 0;
-    }
-
+    const t = now.getMinutes() * 60 + wallSec;
     HANDS.forEach(h => {
         const deg = ((t + h.offset) % 60) * 6;
         h.node.setAttribute("transform", `rotate(${deg} ${C} ${C})`);
     });
-
-    /* Send-off countdown */
-    const interval = currentInterval();
-    const remaining = interval - (t % interval);
-    const shown = (mode === "session" && !running) ? (preEnd ? Math.max(0, (preEnd - nowMs()) / 1000) : interval) : remaining;
-    const tenths = Math.floor(shown * 10);
-    const txt = `${pad(Math.floor(tenths / 600))}:${pad(Math.floor(tenths / 10) % 60)}.${tenths % 10}`;
-    $("nextSend2").textContent = txt;
-    $("bar").style.width = (preEnd ? 0 : (1 - shown / interval) * 100) + "%";
-
-    if (mode === "session" && paceDisplay === "digital") {
-        const preparing = preEnd !== null;
-        const duration = preparing ? 10 : interval;
-        const color = preparing ? COLORS.prep : COLORS.work;
-        const circumference = 2 * Math.PI * 175;
-        const ring = $("ringFg");
-        ring.setAttribute("stroke", color);
-        ring.setAttribute("stroke-dasharray", circumference);
-        ring.setAttribute("stroke-dashoffset", circumference * Math.max(0, Math.min(1, shown / duration)));
-        $("tLabel").textContent = preparing ? "PRÊT" : "INTERVALLES";
-        $("tLabel").setAttribute("fill", color);
-        $("tDigits").textContent = fmtMS(shown);
-        $("tDigits").setAttribute("fill", color);
-        $("tSub").textContent = preparing ? "Début de l’entraînement" : "Prochain départ";
-    }
-
-    const cycle = Math.floor(t / interval);
-    const ceil = Math.ceil(remaining);
-    if (mode === "wall" || running) {
-        if (lastCycle !== null && cycle !== lastCycle) {
-            startBeep();
-        } else if (lastCeil !== null && ceil !== lastCeil && ceil <= 3 && ceil >= 1 && interval > 3) {
-            countdownBeep();
-        }
-    }
-    lastCycle = cycle;
-    lastCeil = ceil;
-
-    /* Elapsed: time of day in wall mode, session time otherwise */
-    if (mode === "wall") {
-        $("elapsed").textContent = tod;
-    } else {
-        const e = Math.floor(elapsedSec);
-        $("elapsed").textContent = `${pad(Math.floor(e / 3600))}:${pad(Math.floor(e / 60) % 60)}:${pad(e % 60)}`;
-    }
+    $("elapsed").textContent = tod;
 
     requestAnimationFrame(tick);
 }
