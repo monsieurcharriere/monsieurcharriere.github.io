@@ -198,9 +198,7 @@
       margin-top: auto;
       padding-top: 18px;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      text-align: center;
     }
 
     .stats .k { font-size: 0.75rem; color: #9fb3c8; margin-bottom: 4px; }
@@ -384,8 +382,8 @@
     <button type="button" class="btn small" id="preBtn">Compte à rebours de 10 s : activé</button>
 
     <div class="stats" id="stats">
-      <div><div class="k">Temps écoulé</div><div class="v" id="elapsed">00:00:00</div></div>
-      <div><div class="k">Prochain départ</div><div class="v" id="nextSend">00:00.0</div></div>
+      <div class="k" id="elapsedLabel">Heure</div>
+      <div class="v" id="elapsed">00:00:00</div>
     </div>
 
     <div class="home"><a href="https://monsieurcharriere.github.io">Revenir au site</a></div>
@@ -616,8 +614,6 @@ function renderTimer() {
             $("tSub").textContent = (phase.sub ? phase.sub + " · " : "") + (phase.kind === "prep" ? "" : "Restant " + fmtMS(total));
             const e = Math.floor((now - timer.workoutStart) / 1000);
             $("elapsed").textContent = `${pad(Math.floor(e / 3600))}:${pad(Math.floor(e / 60) % 60)}:${pad(e % 60)}`;
-            const tenths = Math.floor(rem * 10);
-            $("nextSend").textContent = `${pad(Math.floor(tenths / 600))}:${pad(Math.floor(tenths / 10) % 60)}.${tenths % 10}`;
             return;
         }
     }
@@ -629,7 +625,6 @@ function renderTimer() {
         $("tDigits").textContent = "00:00";
         $("tDigits").setAttribute("fill", COLORS.done);
         $("tSub").textContent = "Bon travail !";
-        $("nextSend").textContent = "00:00.0";
         return;
     }
     /* Idle preview */
@@ -642,7 +637,6 @@ function renderTimer() {
     $("tDigits").setAttribute("fill", COLORS.work);
     $("tSub").textContent = prev && prev.sub ? prev.sub : "";
     $("elapsed").textContent = "00:00:00";
-    $("nextSend").textContent = "00:00.0";
 }
 
 const TYPE_ROWS = {
@@ -671,7 +665,7 @@ function applyView() {
     $("interval").hidden = sess;
     $("workoutIntervalLabel").hidden = !sess;
     $("workoutInterval").hidden = !sess;
-    $("stats").hidden = true;
+    $("elapsedLabel").textContent = sess ? "Temps d'entraînement" : "Heure";
     $("workoutActions").hidden = !sess;
     $("workoutOptions").hidden = !sess;
     $("preBtn").hidden = !sess;
@@ -850,7 +844,6 @@ function tick() {
     const shown = (mode === "session" && !running) ? (preEnd ? Math.max(0, (preEnd - nowMs()) / 1000) : interval) : remaining;
     const tenths = Math.floor(shown * 10);
     const txt = `${pad(Math.floor(tenths / 600))}:${pad(Math.floor(tenths / 10) % 60)}.${tenths % 10}`;
-    $("nextSend").textContent = txt;
     $("nextSend2").textContent = txt;
     $("bar").style.width = (preEnd ? 0 : (1 - shown / interval) * 100) + "%";
 
