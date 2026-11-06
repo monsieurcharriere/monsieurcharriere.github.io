@@ -7,6 +7,7 @@
   <link rel="icon" href="images/favicon.ico" type="image/x-icon">
   <style>
     * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
 
     html, body {
       margin: 0;
@@ -154,6 +155,40 @@
 
     .btn.primary { background: #0a84ff; border-color: #0a84ff; }
     .btn.small { font-size: 0.85rem; padding: 12px; color: #d0dbe6; }
+    .types { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .types button {
+      padding: 11px 8px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: #12293f;
+      color: #d0dbe6;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .types button.active { background: #2b5c94; border-color: #4a86c5; color: #fff; }
+
+    .settings { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+    .settings label { font-size: 0.7rem; font-weight: 700; color: #9fb3c8; letter-spacing: 0.06em; text-transform: uppercase; }
+    .settings input {
+      width: 100%;
+      margin-top: 4px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: #16304d;
+      color: #fff !important;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .timer-view { display: none; }
+    .stage.timer-mode .clock-view { display: none; }
+    .stage.timer-mode .timer-view { display: block; }
+    .stage.timer-mode .sendoff { display: none; }
+    .ring-bg { fill: none; stroke: #16304d; stroke-width: 22; }
+    .ring-fg { fill: none; stroke-width: 22; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 200px 200px; }
+
     .btn.active { background: #2b5c94; border-color: #4a86c5; color: #fff; }
     .btn:disabled { opacity: 0.4; cursor: default; }
 
@@ -251,7 +286,7 @@
       <span id="tod">--:--:--</span>
     </div>
 
-    <div>
+    <div id="legendBox">
       <div class="label">Départ des aiguilles</div>
       <div class="legend">
         <span><i class="dot" style="background:#ffffff"></i>00 secondes</span>
@@ -263,10 +298,26 @@
 
     <div class="toggle" role="tablist">
       <button type="button" id="modeWall" class="active">Horloge murale</button>
-      <button type="button" id="modeSession">Séance</button>
+      <button type="button" id="modeSession">Entraînement</button>
     </div>
 
-    <div>
+    <div id="typeBox" hidden>
+      <div class="label">Type d'entraînement</div>
+      <div class="types">
+        <button type="button" data-type="pace" class="active">Intervalles</button>
+        <button type="button" data-type="tabata">TABATA</button>
+        <button type="button" data-type="emom">EMOM</button>
+        <button type="button" data-type="amrap">AMRAP / Minuterie</button>
+      </div>
+      <div class="settings" id="settings">
+        <label id="rowWork">Travail (s)<input type="number" id="setWork" value="20" min="1"></label>
+        <label id="rowRest">Repos (s)<input type="number" id="setRest" value="10" min="0"></label>
+        <label id="rowRounds">Rondes<input type="number" id="setRounds" value="8" min="1"></label>
+        <label id="rowMinutes">Minutes<input type="number" id="setMinutes" value="10" min="1"></label>
+      </div>
+    </div>
+
+    <div id="intervalBox">
       <div class="label" style="text-transform:none;font-size:0.9rem;color:#fff;letter-spacing:0">Intervalle de départ</div>
       <select id="interval">
         <option value="15">15 secondes</option>
@@ -300,7 +351,7 @@
   <main class="stage" id="stage">
     <div class="tod-overlay" id="todOverlay"></div>
 
-    <svg viewBox="0 0 400 400" role="img" aria-label="Horloge de pacing à quatre aiguilles">
+    <svg class="clock-view" viewBox="0 0 400 400" role="img" aria-label="Horloge de pacing à quatre aiguilles">
       <circle cx="200" cy="200" r="196" fill="#151515"/>
       <circle cx="200" cy="200" r="178" fill="#000"/>
       <g id="ticks"></g>
@@ -308,6 +359,14 @@
       <g id="hands"></g>
       <circle cx="200" cy="200" r="19" fill="#fff"/>
       <text id="preText" x="200" y="300" fill="#5ac8fa" font-size="80" font-weight="700" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Inter, sans-serif"></text>
+    </svg>
+
+    <svg class="timer-view" viewBox="0 0 400 400" role="img" aria-label="Minuterie">
+      <circle class="ring-bg" cx="200" cy="200" r="170"/>
+      <circle class="ring-fg" id="ringFg" cx="200" cy="200" r="170" stroke="#2ecc5b"/>
+      <text id="tLabel" x="200" y="110" fill="#fff" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Inter, sans-serif" letter-spacing="3"></text>
+      <text id="tDigits" x="200" y="205" fill="#fff" font-size="104" font-weight="700" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Inter, sans-serif" style="font-variant-numeric: tabular-nums"></text>
+      <text id="tSub" x="200" y="290" fill="#9fb3c8" font-size="19" font-weight="600" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Inter, sans-serif"></text>
     </svg>
 
     <div class="sendoff">
@@ -377,6 +436,8 @@ let sessionStart = null;  // ms
 let soundOn = true;
 let preEnd = null;        // ms, end of the pre-workout countdown
 let preCeil = null;
+let type = "pace";        // "pace" | "tabata" | "emom" | "amrap"
+let timer = null;         // { phases, idx, phaseStart, workoutStart, ceil }
 let preCountdownOn = true;
 let lastCycle = null;
 let lastCeil = null;
@@ -412,22 +473,161 @@ function unlockAudio() {
 }
 ["pointerdown", "keydown"].forEach(ev => document.addEventListener(ev, unlockAudio));
 
+const COLORS = { prep: "#5ac8fa", work: "#2ecc5b", rest: "#ff453a", done: "#ffffff" };
+const num = (id, d) => Math.max(0, parseInt($(id).value, 10) || d);
+
+function buildPhases(withPrep) {
+    const p = [];
+    if (withPrep) p.push({ name: "PRÊT", dur: 10, color: COLORS.prep, kind: "prep" });
+    if (type === "tabata") {
+        const w = Math.max(1, num("setWork", 20)), r = num("setRest", 10), n = Math.max(1, num("setRounds", 8));
+        for (let i = 1; i <= n; i++) {
+            p.push({ name: "TRAVAIL", dur: w, color: COLORS.work, kind: "work", sub: `Ronde ${i} / ${n}` });
+            if (r > 0) p.push({ name: "REPOS", dur: r, color: COLORS.rest, kind: "rest", sub: `Ronde ${i} / ${n}` });
+        }
+    } else if (type === "emom") {
+        const n = Math.max(1, num("setMinutes", 10));
+        for (let i = 1; i <= n; i++) {
+            p.push({ name: "EMOM", dur: 60, color: COLORS.work, kind: "work", sub: `Minute ${i} / ${n}` });
+        }
+    } else if (type === "amrap") {
+        const n = Math.max(1, num("setMinutes", 10));
+        p.push({ name: "AMRAP", dur: n * 60, color: COLORS.work, kind: "work", sub: `${n} ${n > 1 ? "minutes" : "minute"}` });
+    }
+    return p;
+}
+
+const fmtMS = sec => {
+    const c = Math.max(0, Math.ceil(sec - 1e-6));
+    return `${pad(Math.floor(c / 60))}:${pad(c % 60)}`;
+};
+
+function timerActive() { return !!timer && !timer.done; }
+
+function startTimer() {
+    const phases = buildPhases(preCountdownOn);
+    if (!phases.length) return;
+    const now = Date.now();
+    timer = { phases, idx: 0, phaseStart: now, workoutStart: now, ceil: null, done: false };
+    if (phases[0].kind !== "prep") startBeep();
+    updateStartBtn();
+}
+
+function stopTimer() { timer = null; updateStartBtn(); }
+
+function renderTimer() {
+    const ring = $("ringFg");
+    const C2 = 2 * Math.PI * 170;
+    ring.setAttribute("stroke-dasharray", C2);
+
+    let phase, rem, dur, total = 0, elapsedWork = 0;
+    if (timer && !timer.done) {
+        const now = Date.now();
+        phase = timer.phases[timer.idx];
+        let el = (now - timer.phaseStart) / 1000;
+        while (el >= phase.dur) {
+            timer.idx++;
+            timer.phaseStart += phase.dur * 1000;
+            if (timer.idx >= timer.phases.length) {
+                timer.done = true;
+                startBeep();
+                updateStartBtn();
+                break;
+            }
+            phase = timer.phases[timer.idx];
+            if (phase.kind === "rest") tone(440, 0.5, 0.3); else startBeep();
+            timer.ceil = null;
+            el = (now - timer.phaseStart) / 1000;
+        }
+        if (!timer.done) {
+            dur = phase.dur;
+            rem = dur - el;
+            const c = Math.ceil(rem);
+            if (c !== timer.ceil) {
+                if (c <= 3 && c >= 1 && dur > 3) countdownBeep();
+                timer.ceil = c;
+            }
+            total = timer.phases.slice(timer.idx + 1).reduce((a, p) => a + p.dur, 0) + rem;
+            ring.setAttribute("stroke", phase.color);
+            ring.setAttribute("stroke-dashoffset", C2 * (1 - el / dur));
+            $("tLabel").textContent = phase.name;
+            $("tLabel").setAttribute("fill", phase.color);
+            $("tDigits").textContent = fmtMS(rem);
+            $("tSub").textContent = (phase.sub ? phase.sub + " · " : "") + (phase.kind === "prep" ? "" : "Restant " + fmtMS(total));
+            const e = Math.floor((now - timer.workoutStart) / 1000);
+            $("elapsed").textContent = `${pad(Math.floor(e / 3600))}:${pad(Math.floor(e / 60) % 60)}:${pad(e % 60)}`;
+            const tenths = Math.floor(rem * 10);
+            $("nextSend").textContent = `${pad(Math.floor(tenths / 600))}:${pad(Math.floor(tenths / 10) % 60)}.${tenths % 10}`;
+            return;
+        }
+    }
+    if (timer && timer.done) {
+        ring.setAttribute("stroke", COLORS.done);
+        ring.setAttribute("stroke-dashoffset", 0);
+        $("tLabel").textContent = "TERMINÉ";
+        $("tLabel").setAttribute("fill", COLORS.done);
+        $("tDigits").textContent = "00:00";
+        $("tSub").textContent = "Bon travail !";
+        $("nextSend").textContent = "00:00.0";
+        return;
+    }
+    /* Idle preview */
+    const prev = buildPhases(false)[0];
+    ring.setAttribute("stroke", COLORS.work);
+    ring.setAttribute("stroke-dashoffset", C2);
+    $("tLabel").textContent = "PRÊT";
+    $("tLabel").setAttribute("fill", "#fff");
+    $("tDigits").textContent = prev ? fmtMS(prev.dur) : "00:00";
+    $("tSub").textContent = prev && prev.sub ? prev.sub : "";
+    $("elapsed").textContent = "00:00:00";
+    $("nextSend").textContent = "00:00.0";
+}
+
+const TYPE_ROWS = {
+    pace: [], tabata: ["rowWork", "rowRest", "rowRounds"], emom: ["rowMinutes"], amrap: ["rowMinutes"]
+};
+
+function setType(tp) {
+    type = tp;
+    stopTimer();
+    if (tp === "tabata") { $("setWork").value = 20; $("setRest").value = 10; $("setRounds").value = 8; }
+    if (tp === "emom" || tp === "amrap") $("setMinutes").value = 10;
+    applyView();
+}
+
+function applyView() {
+    const sess = mode === "session";
+    const pace = type === "pace";
+    $("typeBox").hidden = !sess;
+    $("legendBox").hidden = sess && !pace;
+    $("intervalBox").hidden = sess && !pace;
+    $("stage").classList.toggle("timer-mode", sess && !pace);
+    document.querySelectorAll(".types button").forEach(b => b.classList.toggle("active", b.dataset.type === type));
+    ["rowWork", "rowRest", "rowRounds", "rowMinutes"].forEach(id => {
+        $(id).hidden = !TYPE_ROWS[type].includes(id);
+    });
+    $("settings").hidden = pace;
+}
+
+document.querySelectorAll(".types button").forEach(b => b.onclick = () => setType(b.dataset.type));
+
 function setMode(m) {
     mode = m;
     $("modeWall").classList.toggle("active", m === "wall");
     $("modeSession").classList.toggle("active", m === "session");
-    $("modeLabel").textContent = m === "wall" ? "Horloge murale" : "Séance";
+    $("modeLabel").textContent = m === "wall" ? "Horloge murale" : "Entraînement";
     $("startBtn").disabled = m === "wall";
     $("resetBtn").disabled = m === "wall";
     updateSoundBtn();
     updatePreBtn();
-    if (m === "wall") { running = false; sessionStart = null; preEnd = null; }
+    if (m === "wall") { running = false; sessionStart = null; preEnd = null; timer = null; }
     lastCycle = null; lastCeil = null;
+    applyView();
     updateStartBtn();
 }
 
 function updateStartBtn() {
-    $("startBtn").innerHTML = (running || preEnd) ? "&#10074;&#10074; Arrêter" : "&#9654; Démarrer";
+    $("startBtn").innerHTML = (running || preEnd || timerActive()) ? "&#10074;&#10074; Arrêter" : "&#9654; Démarrer";
 }
 
 $("modeWall").onclick = () => setMode("wall");
@@ -435,6 +635,10 @@ $("modeSession").onclick = () => setMode("session");
 
 $("startBtn").onclick = () => {
     if (mode !== "session") return;
+    if (type !== "pace") {
+        if (timerActive()) stopTimer(); else startTimer();
+        return;
+    }
     if (running || preEnd) { running = false; preEnd = null; }
     else if (preCountdownOn) { preEnd = Date.now() + 10000; preCeil = null; }
     else { sessionStart = Date.now(); running = true; lastCycle = null; lastCeil = null; }
@@ -447,7 +651,7 @@ $("preBtn").onclick = () => {
 };
 
 $("resetBtn").onclick = () => {
-    running = false; sessionStart = null; preEnd = null; lastCycle = null; lastCeil = null;
+    running = false; sessionStart = null; preEnd = null; timer = null; lastCycle = null; lastCeil = null;
     updateStartBtn();
 };
 
@@ -503,6 +707,12 @@ function tick() {
     const tod = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
     $("tod").textContent = tod;
     $("todOverlay").textContent = tod;
+
+    if (mode === "session" && type !== "pace") {
+        renderTimer();
+        requestAnimationFrame(tick);
+        return;
+    }
 
     /* Pre-workout countdown */
     let preText = "";
