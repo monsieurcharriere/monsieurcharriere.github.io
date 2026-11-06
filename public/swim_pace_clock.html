@@ -331,6 +331,14 @@
       </select>
     </div>
 
+    <div id="paceDisplayBox" hidden>
+      <div class="label">Affichage des intervalles</div>
+      <div class="toggle" role="group" aria-label="Affichage des intervalles">
+        <button type="button" id="displayDigital" class="active" aria-pressed="true">Numérique</button>
+        <button type="button" id="displayAnalog" aria-pressed="false">Horloge de nage</button>
+      </div>
+    </div>
+
     <div class="btn-row">
       <button type="button" class="btn primary" id="startBtn">&#9654; Démarrer</button>
       <button type="button" class="btn" id="resetBtn">&#8635; Réinitialiser</button>
@@ -364,7 +372,7 @@
 
     <svg class="timer-view" viewBox="0 0 400 400" role="img" aria-label="Minuterie">
       <circle class="ring-bg" cx="200" cy="200" r="175"/>
-      <circle class="ring-fg" id="ringFg" cx="200" cy="200" r="175" stroke="#2bff6e"/>
+      <circle class="ring-fg" id="ringFg" cx="200" cy="200" r="175" stroke="#39ff14"/>
       <text id="tLabel" x="200" y="110" fill="#fff" font-size="26" font-weight="700" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Inter, sans-serif" letter-spacing="3"></text>
       <text id="tDigits" x="200" y="205" fill="#fff" font-size="104" font-weight="700" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Inter, sans-serif" style="font-variant-numeric: tabular-nums"></text>
       <text id="tSub" x="200" y="290" fill="#9fb3c8" font-size="19" font-weight="600" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, Inter, sans-serif"></text>
@@ -475,7 +483,7 @@ function unlockAudio() {
 }
 ["pointerdown", "keydown"].forEach(ev => document.addEventListener(ev, unlockAudio));
 
-const COLORS = { prep: "#35d0ff", work: "#2bff6e", rest: "#ff2d55", done: "#ffffff" };
+const COLORS = { prep: "#35d0ff", work: "#39ff14", rest: "#ff1493", done: "#ffffff" };
 const num = (id, d) => Math.max(0, parseInt($(id).value, 10) || d);
 
 function buildPhases(withPrep) {
@@ -607,6 +615,8 @@ const TYPE_ROWS = {
     pace: [], tabata: ["rowWork", "rowRest", "rowRounds"], emom: ["rowMinutes"], amrap: ["rowMinutes"]
 };
 
+let paceDisplay = "digital";
+
 function setType(tp) {
     type = tp;
     stopTimer();
@@ -618,10 +628,17 @@ function setType(tp) {
 function applyView() {
     const sess = mode === "session";
     const pace = type === "pace";
+    const digitalPace = sess && pace && paceDisplay === "digital";
     $("typeBox").hidden = !sess;
-    $("legendBox").hidden = sess && !pace;
+    $("paceDisplayBox").hidden = !sess || !pace;
+    $("legendBox").hidden = sess && (!pace || digitalPace);
     $("intervalBox").hidden = sess && !pace;
-    $("stage").classList.toggle("timer-mode", sess && !pace);
+    $("stage").classList.toggle("timer-mode", sess && (!pace || digitalPace));
+    for (const [id, display] of [["displayDigital", "digital"], ["displayAnalog", "analog"]]) {
+        const selected = paceDisplay === display;
+        $(id).classList.toggle("active", selected);
+        $(id).setAttribute("aria-pressed", String(selected));
+    }
     document.querySelectorAll(".types button").forEach(b => b.classList.toggle("active", b.dataset.type === type));
     ["rowWork", "rowRest", "rowRounds", "rowMinutes"].forEach(id => {
         $(id).hidden = !TYPE_ROWS[type].includes(id);
@@ -630,6 +647,8 @@ function applyView() {
 }
 
 document.querySelectorAll(".types button").forEach(b => b.onclick = () => setType(b.dataset.type));
+$("displayDigital").onclick = () => { paceDisplay = "digital"; applyView(); };
+$("displayAnalog").onclick = () => { paceDisplay = "analog"; applyView(); };
 
 function setMode(m) {
     mode = m;
@@ -783,6 +802,22 @@ function tick() {
     $("nextSend").textContent = txt;
     $("nextSend2").textContent = txt;
     $("bar").style.width = (preEnd ? 0 : (1 - shown / interval) * 100) + "%";
+
+    if (mode === "session" && paceDisplay === "digital") {
+        const preparing = preEnd !== null;
+        const duration = preparing ? 10 : interval;
+        const color = preparing ? COLORS.prep : COLORS.work;
+        const circumference = 2 * Math.PI * 175;
+        const ring = $("ringFg");
+        ring.setAttribute("stroke", color);
+        ring.setAttribute("stroke-dasharray", circumference);
+        ring.setAttribute("stroke-dashoffset", circumference * Math.max(0, Math.min(1, shown / duration)));
+        $("tLabel").textContent = preparing ? "PRÊT" : "INTERVALLES";
+        $("tLabel").setAttribute("fill", color);
+        $("tDigits").textContent = fmtMS(shown);
+        $("tDigits").setAttribute("fill", color);
+        $("tSub").textContent = preparing ? "Début de l’entraînement" : "Prochain départ";
+    }
 
     const cycle = Math.floor(t / interval);
     const ceil = Math.ceil(remaining);
