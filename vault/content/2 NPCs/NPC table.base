@@ -1,0 +1,11 @@
+views:
+  - type: table
+    name: View
+    filters:
+      and:
+        - file.folder == "NPCs"
+        - file.name != "NPC table"
+        - file.name != "Callouts"
+    order:
+      - file.name
+    markers: number

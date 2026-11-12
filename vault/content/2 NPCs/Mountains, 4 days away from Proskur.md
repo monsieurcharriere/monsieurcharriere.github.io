@@ -1,0 +1,3 @@
+- [[Xhitigal, evil cruel wicked red dragon]] &  [[Amrielle, just and compassionate gold dragon]] laird here and evetually fought. [[Xhitigal, evil cruel wicked red dragon]] won and became a divine, godlike creature.
+  - The resultant cult tried to expand area above and below ground and something happened and citadel got smashed into ruins. Ruins are about 6 city blocks in area.
+- This area is 4 days march north east of [[Proskur]].
