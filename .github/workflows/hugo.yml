@@ -27,6 +27,25 @@ jobs:
       - name: Build
         run: hugo --minify
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: vault/package-lock.json
+
+      - name: Install Quartz dependencies
+        working-directory: vault
+        run: npm ci
+
+      - name: Install Quartz plugins
+        working-directory: vault
+        run: npx quartz plugin install
+
+      - name: Build vault
+        working-directory: vault
+        run: npx quartz build --output ../public/vault
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
