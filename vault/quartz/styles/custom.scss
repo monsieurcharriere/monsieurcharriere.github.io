@@ -2,6 +2,29 @@
 
 // put your custom CSS here!
 
+body[data-slug="index"] {
+  --light: transparent;
+  --lightgray: rgba(32, 32, 32, 0.8);
+  --gray: #b8b8b8;
+  --darkgray: #f1f1f1;
+  --dark: #fff;
+  --secondary: #b8d8ff;
+  --tertiary: #a6e2c3;
+
+  background:
+    linear-gradient(rgba(34, 34, 34, 0.7), rgba(34, 34, 34, 0.7)),
+    url("./static/ambush-on-the-forest-road.webp") center / cover fixed;
+}
+
+body[data-slug="index"] h1,
+body[data-slug="index"] h2,
+body[data-slug="index"] h3,
+body[data-slug="index"] h4,
+body[data-slug="index"] h5,
+body[data-slug="index"] h6 {
+  color: #f1f1f1;
+}
+
 :root[saved-theme="dark"] {
   h1 {
     color: #d18989;
