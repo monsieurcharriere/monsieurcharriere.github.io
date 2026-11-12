@@ -1,1 +1,0 @@
-![[NPC table.base]]
