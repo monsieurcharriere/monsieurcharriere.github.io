@@ -6,4 +6,6 @@ views:
         - file.folder == "NPCs"
         - file.name != "NPC table"
         - file.name != "Callouts"
+    order:
+      - file.name
     markers: number
