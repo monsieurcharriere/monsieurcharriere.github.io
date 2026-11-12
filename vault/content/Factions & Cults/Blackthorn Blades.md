@@ -1,1 +1,0 @@
-Lead by [[Veyra Nightfang]].
