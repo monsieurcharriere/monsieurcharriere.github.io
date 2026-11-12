@@ -1,5 +1,7 @@
 ---
-title: Vault
+title: D&D Vault
 ---
 
-Welcome to my vault.
+# Current Campaign: You've been ROMBUZZLED!!
+
+## [[Campaign Notes/Romu's Campaign Notes|START HERE]]
