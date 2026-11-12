@@ -7,7 +7,7 @@
 7. Mirror comb set
 8. Gem: ruby
 9. banner: order of the pheonix (100 GP)
-10. Magical +1 Scythe x2
+10. Magical +1 Sai x2
 11. Potion of Cats Grace
 12. Potion of Lesser Restoration
 13. Statue (500 GP)
