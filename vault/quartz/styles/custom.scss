@@ -1,3 +1,55 @@
 @use "./variables.scss" as *;
 
 // put your custom CSS here!
+
+:root[saved-theme="dark"] {
+  h1 {
+    color: #d18989;
+  }
+
+  h2 {
+    color: #cea28d;
+  }
+
+  h3 {
+    color: #93c89c;
+  }
+
+  h4 {
+    color: #7eb7f1;
+  }
+
+  h5 {
+    color: #bab3ef;
+  }
+
+  h6 {
+    color: #7ec7c5;
+  }
+}
+
+:root[saved-theme="light"] {
+  h1 {
+    color: #bd5151;
+  }
+
+  h2 {
+    color: #c77b23;
+  }
+
+  h3 {
+    color: #478e14;
+  }
+
+  h4 {
+    color: #0585a8;
+  }
+
+  h5 {
+    color: #724191;
+  }
+
+  h6 {
+    color: #117d52;
+  }
+}
